@@ -1,0 +1,341 @@
+C51 COMPILER V9.59.0.0   VERPRINT                                                          01/20/2020 12:19:02 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE VERPRINT
+OBJECT MODULE PLACED IN .\Objects\verprint.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE verprint.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\vrfcdor_impresora) D
+                    -EBUG OBJECTEXTEND PRINT(.\Listings\verprint.lst) TABS(2) OBJECT(.\Objects\verprint.obj)
+
+line level    source
+
+   1          #include <verprint.h>
+   2          #include <string.h>
+   3          #include <reg51.h>
+   4          /*funciones prototipo externas */
+   5          
+   6          extern void Debug_txt_Tibbo(unsigned char * str);
+   7          extern void DebugBufferMF(unsigned char *str,unsigned char num_char,char io);
+   8          extern void Debug_chr_Tibbo(unsigned char Dat);
+   9          extern void PantallaLCD(unsigned char cod_msg);
+  10          extern void send_portERR(unsigned char cod_err);
+  11          extern unsigned char  ValidaSensoresPaso(void);
+  12          extern void clear_buffer();
+  13          extern void Trama_print_cod_barras(unsigned char *msj,unsigned char vehiculo);
+  14          extern void Cmd_LPR_Salida_print(unsigned char *msj,unsigned char vehiculo);
+  15          
+  16          
+  17          /*variables externas*/
+  18          extern unsigned char g_cEstadoComSoft;
+  19          extern unsigned char g_cEstadoImpresion;
+  20          extern unsigned char ValTimeOutCom;
+  21          extern unsigned char buffer_ready;
+  22          extern idata unsigned char rbuf [];
+  23          extern  unsigned char g_cContByteRx;
+  24          extern  unsigned char  USE_LPR;
+  25          extern unsigned char Timer_wait;
+  26          
+  27          sbit lock = P1^7;           //Relevo 
+  28          /*----------------------------------------------------------------------------
+  29          tiempo de delay entre funciones
+  30          ------------------------------------------------------------------------------*/
+  31          
+  32          #define   TIME_CARD         20    //50
+  33          #define   TIME_RX           200   //
+  34          #define   TIME_PLACA        55
+  35          #define   TIME_PULSADOR     3
+  36          
+  37          /*----------------------------------------------------------------------------
+  38          definicion de recepcion serial 
+  39          ------------------------------------------------------------------------------*/
+  40          
+  41          #define  ESPERA_RX          0           //espera el primer cmd de recepcion del verificado 
+  42          /*----------------------------------------------------------------------------
+  43          Definiciones de sequencias de lectura de ticket 
+  44          ------------------------------------------------------------------------------*/
+  45          
+  46          #define SEQ_INICIO            0X00  
+  47          #define SEQ_LEECODIGO         0X01
+  48          #define SEQ_SEND_SOFT         0X02
+  49          #define SEQ_SEND_SOFT_QR      0x03
+  50          #define SEQ_CMNCCN_PTO        0X04
+  51          #define SEQ_REINTENTO         0X05
+  52          /*---------------------------------------------------------------------------------
+  53          definiciones de la pantalla
+  54          -----------------------------------------------------------------------------------*/
+C51 COMPILER V9.59.0.0   VERPRINT                                                          01/20/2020 12:19:02 PAGE 2   
+
+  55          #define INGRESO                 0xFA
+  56          #define BIENVENIDO              0XFE
+  57          #define AUDIO_IN                0XA0    // RELE 1
+  58          #define AUDIO_ENTER             0XA1    // RELE 2
+  59          #define GRACIAS                 0XFF
+  60          
+  61          /*---------------------------------------------------------------------------------
+  62          funcion que debuelve la posicion del inicio del primer caracter de numerico de 0 a 9
+  63          -----------------------------------------------------------------------------------*/
+  64          unsigned char num_num(unsigned char * p)  
+  65          {
+  66   1      unsigned char contador=0;
+  67   1        while ((*p < 0x30)|| (*p > 0x39))
+  68   1        {
+  69   2          
+  70   2          p++;
+  71   2          contador++;
+  72   2        }
+  73   1        return contador;
+  74   1      }   
+  75          /*---------------------------------------------------------------------------------
+  76          definiciones de la pantalla
+  77          -----------------------------------------------------------------------------------*/
+  78          unsigned char num_char(unsigned char * p,unsigned char chr) 
+  79          {
+  80   1      unsigned char contador=0;
+  81   1        while (*p !=chr)
+  82   1        {
+  83   2          
+  84   2          p++;
+  85   2          contador++;
+  86   2        }
+  87   1        return contador;
+  88   1      }   
+  89          /*--------------------------------------------------------------------------------------------------------
+             ------------------
+  90          procedimiento que lee el codigo de barra o el QR
+  91          SEQ_INICIO=00 se detecta la presencia vehicular 
+  92          SEQ_QUEST_PRINT=1 si fue  presionado el boton 
+  93          ----------------------------------------------------------------------------------------------------------
+             ------------------*/
+  94          
+  95          void Lee_ticket(void)
+  96          {
+  97   1        static unsigned char paso_una_vez=0;
+  98   1        static unsigned char Ticket[10];
+  99   1        unsigned char temp,temp2,vehiculo;
+ 100   1        unsigned char *tipo_vehiculo;
+ 101   1        switch (g_cEstadoImpresion)
+ 102   1        {
+ 103   2          case SEQ_INICIO:
+ 104   2          /*detecta el vehiculo en el loop*/
+ 105   2            
+ 106   2          if (ValTimeOutCom==1)                                                                 /*tiempo de espera */
+ 107   2          {
+ 108   3            lock=0;
+ 109   3            
+ 110   3            if (ValidaSensoresPaso()!=0)                                                        /*pregunto q alla presencia vehicular*/
+ 111   3            {
+ 112   4              Debug_txt_Tibbo((unsigned char *) "\r\n\Vehiculo en el loop\r\n");                  /* se encuentra un sensor a
+             -ctivo*/
+ 113   4              PantallaLCD(BIENVENIDO);                                                          /*msj acerque el ticket*/
+C51 COMPILER V9.59.0.0   VERPRINT                                                          01/20/2020 12:19:02 PAGE 3   
+
+ 114   4              if(paso_una_vez==0)
+ 115   4              {
+ 116   5              send_portERR(AUDIO_IN);                                                           /*habilito el audio de entrada*/
+ 117   5              paso_una_vez=1;
+ 118   5              }                           
+ 119   4              ValTimeOutCom=TIME_RX;
+ 120   4              g_cEstadoImpresion=SEQ_LEECODIGO;                                                   /*volvemos a preguntar  */  
+ 121   4                    
+ 122   4              
+ 123   4            
+ 124   4            }
+ 125   3            else
+ 126   3              {
+ 127   4              Debug_txt_Tibbo((unsigned char *) "Vehiculo no en el loop\r\n\r\n");              /* no hay vehiculo en el lo
+             -op*/
+ 128   4              paso_una_vez=0;                                               
+ 129   4              ValTimeOutCom=TIME_PULSADOR;
+ 130   4              g_cEstadoImpresion=SEQ_INICIO;                                                    /*volvemos a preguntar  */  
+ 131   4                    
+ 132   4              }
+ 133   3          }
+ 134   2          break;
+ 135   2      /*--------------------------------------------------------------------------------------------------------
+             ------------------------------------
+ 136   2      SEQ_LEECODIGO 
+ 137   2      lee el dato en el pto serial del codigo qr
+ 138   2      ----------------------------------------------------------------------------------------------------------
+             -------------------------------------*/    
+ 139   2          case SEQ_LEECODIGO:
+ 140   2            if ((ValTimeOutCom == 1)||(buffer_ready != 0))
+ 141   2            {
+ 142   3              if (buffer_ready == 1)
+ 143   3              {
+ 144   4                /*trama con codigo QR*/
+ 145   4                Debug_txt_Tibbo((unsigned char *) "trama del lector datalogic cod QR");             /*la respuesta es desco
+             -nocida*/
+ 146   4                Debug_txt_Tibbo(rbuf);                                                              /*imprimo la trama recibida*/
+ 147   4                Debug_txt_Tibbo((unsigned char *) "\r\n");
+ 148   4                                                            
+ 149   4                g_cEstadoImpresion=SEQ_SEND_SOFT_QR ;   
+ 150   4                                                                                                    /* buffer del pto serie (0) inicia a esperar la trama*/
+ 151   4               
+ 152   4              }
+ 153   3              else if (buffer_ready == 2)
+ 154   3              {
+ 155   4                /*codigo de barras*/
+ 156   4                strcpy(Ticket,rbuf);                                                                /*salvo el buffer*/
+ 157   4                temp=strlen(rbuf);                                                                  /*longitud del buffer*/
+ 158   4                Ticket[temp-1]=0;
+ 159   4                if (temp>10)
+ 160   4                {
+ 161   5                clear_buffer();
+ 162   5                PantallaLCD(BIENVENIDO);
+ 163   5                ValTimeOutCom=TIME_RX;
+ 164   5                g_cEstadoImpresion=SEQ_LEECODIGO; 
+ 165   5                break;
+ 166   5                }
+ 167   4                Debug_txt_Tibbo((unsigned char *) "trama del lector datalogic cod barras");           /*la respuesta es de
+             -sconocida*/
+ 168   4                Debug_txt_Tibbo(Ticket);                                                                /*imprimo la trama recibida*/
+ 169   4                Debug_txt_Tibbo((unsigned char *) "\r\n");
+ 170   4                                                          
+C51 COMPILER V9.59.0.0   VERPRINT                                                          01/20/2020 12:19:02 PAGE 4   
+
+ 171   4              
+ 172   4                                                                                        /* buffer del pto serie (0) inicia a esperar la trama*/
+ 173   4                
+ 174   4                g_cEstadoImpresion=SEQ_SEND_SOFT  ;   
+ 175   4              }
+ 176   3              else
+ 177   3              {
+ 178   4                /*respuesta incorrecta limpia buffer lee otra vez*/
+ 179   4                clear_buffer();
+ 180   4                paso_una_vez=0;
+ 181   4                buffer_ready=0;   
+ 182   4                Debug_txt_Tibbo((unsigned char *) "trama del lector datalogic no esta completa\r\n");             /*la resp
+             -uesta es desconocida*/
+ 183   4                ValTimeOutCom=TIME_PULSADOR;
+ 184   4                g_cEstadoImpresion=SEQ_INICIO;  
+ 185   4                }
+ 186   3                      
+ 187   3            
+ 188   3              
+ 189   3            } 
+ 190   2          break;
+ 191   2          case SEQ_SEND_SOFT:
+ 192   2            
+ 193   2              /*codigo de barras*/
+ 194   2              Debug_txt_Tibbo((unsigned char *) "cod barras");  
+ 195   2              buffer_ready=0; 
+ 196   2              vehiculo='C';
+ 197   2              Trama_print_cod_barras(Ticket,vehiculo);
+ 198   2          
+ 199   2            if(USE_LPR)
+ 200   2              {
+ 201   3              Cmd_LPR_Salida_print(Ticket,vehiculo);                                                /*envio datos a Monitor*/
+ 202   3              }
+ 203   2              ValTimeOutCom=TIME_PLACA;
+ 204   2              g_cEstadoImpresion=SEQ_CMNCCN_PTO ;   
+ 205   2            
+ 206   2            
+ 207   2            break;
+ 208   2            
+ 209   2          case  SEQ_SEND_SOFT_QR:
+ 210   2            /*es un codigo QR*/
+ 211   2              ES = 0;                             /*inactivo pto serie y analizo el dato*/
+ 212   2              Debug_txt_Tibbo((unsigned char *) "cod QR r\n");
+ 213   2              /*codigo qr*/
+ 214   2              buffer_ready=0;                     /*limpio el testigo de recepcion de datos serie*/
+ 215   2              
+ 216   2              temp=num_num(rbuf);                 /*funcion que pregunta donde empieza el primer numero del ticket*/
+ 217   2              temp2=num_char(rbuf+temp,'>');      /*busca un caracter en la trama*/
+ 218   2              if ((tipo_vehiculo=strstr(rbuf,"Carro"))!= 0) /*pregunto el tipo de vehiculo grabado en el codigo QR*/
+ 219   2                {
+ 220   3                vehiculo='C';
+ 221   3                }
+ 222   2              else
+ 223   2                {
+ 224   3                vehiculo='M';
+ 225   3                }
+ 226   2              Debug_txt_Tibbo((unsigned char *) "tipo de vehiculo: ");            /*msj tipo de vehiculo */
+ 227   2              Debug_chr_Tibbo(vehiculo);                                          /*caracter del tipo de vehiculo*/
+ 228   2              Debug_txt_Tibbo((unsigned char *) "\r\n");                          /*final de linea*/
+ 229   2              
+ 230   2              Debug_txt_Tibbo((unsigned char *) "longitud de la trama: \r\n");    /*msj longitud de la trama */
+ 231   2              Debug_chr_Tibbo(temp);                                              /*numero de inicio del ticket*/
+C51 COMPILER V9.59.0.0   VERPRINT                                                          01/20/2020 12:19:02 PAGE 5   
+
+ 232   2              Debug_txt_Tibbo((unsigned char *) "\r\n");                          /*final de linea*/                          
+ 233   2              Debug_chr_Tibbo(temp2);                                             /*numero de caracteres del ticket*/
+ 234   2              Debug_txt_Tibbo((unsigned char *) "\r\n");                          /*final de linea*/
+ 235   2             
+ 236   2              Ticket[0]=0;
+ 237   2              if(temp== 0x0c)                                                     /*la trama debe iniciar en 0x0c*/
+ 238   2              { 
+ 239   3              strncpy(Ticket,rbuf+temp,temp2);                                    /*copio el numero de ticket*/
+ 240   3              Ticket[temp2]=0;                                                    /*finalizo la trama con (0)*/
+ 241   3                      
+ 242   3              Debug_txt_Tibbo(Ticket);                                            /*imprimo el numero de ticket*/
+ 243   3              Debug_txt_Tibbo((unsigned char *) "\r\n");                          /*final de linea*/
+ 244   3              
+ 245   3              
+ 246   3          
+ 247   3              Trama_print_cod_barras(Ticket,vehiculo);                            /*envio la trama al pto paralelo y es enviada al
+             - principal el cual comunica con acces*/
+ 248   3              
+ 249   3              
+ 250   3              if(USE_LPR)
+ 251   3              {
+ 252   4              Cmd_LPR_Salida_print(Ticket,vehiculo);                                /*envio datos a Monitor*/
+ 253   4              }
+ 254   3              ValTimeOutCom=TIME_PLACA;
+ 255   3              g_cEstadoImpresion=SEQ_CMNCCN_PTO ; 
+ 256   3              break;
+ 257   3              }
+ 258   2              else
+ 259   2              {
+ 260   3                ES = 1;
+ 261   3                clear_buffer();
+ 262   3                PantallaLCD(BIENVENIDO);
+ 263   3                //send_portERR(TARJETA_INVALIDA);  
+ 264   3                ValTimeOutCom=TIME_RX;
+ 265   3                g_cEstadoImpresion=SEQ_LEECODIGO;   
+ 266   3              
+ 267   3              }
+ 268   2                break;
+ 269   2          case SEQ_CMNCCN_PTO:
+ 270   2            if (ValTimeOutCom==1)
+ 271   2            {
+ 272   3              ES = 1;                                                                             /*habilito pto*/
+ 273   3              Debug_txt_Tibbo((unsigned char *) "fin de lectura de trama\r\n");                   /*la respuesta es desconoci
+             -da*/
+ 274   3              PantallaLCD(GRACIAS);
+ 275   3              ValTimeOutCom=TIME_PULSADOR;
+ 276   3              clear_buffer();
+ 277   3              paso_una_vez=0;      
+ 278   3              g_cEstadoImpresion=SEQ_INICIO;
+ 279   3            }
+ 280   2            break;
+ 281   2          default:
+ 282   2          g_cEstadoImpresion=SEQ_INICIO;
+ 283   2          break;
+ 284   2        
+ 285   2          case SEQ_REINTENTO:
+ 286   2            if (ValTimeOutCom==1)
+ 287   2            {
+ 288   3              Debug_txt_Tibbo((unsigned char *) "REENVIA TRAMA PTO PARALELO\r\n ");           /*msj tipo de vehiculo */
+ 289   3              
+ 290   3              Trama_print_cod_barras(Ticket,vehiculo);  
+ 291   3              ValTimeOutCom=TIME_PLACA;
+C51 COMPILER V9.59.0.0   VERPRINT                                                          01/20/2020 12:19:02 PAGE 6   
+
+ 292   3              g_cEstadoImpresion=SEQ_CMNCCN_PTO ; 
+ 293   3            }
+ 294   2              break;    
+ 295   2        }
+ 296   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    802    ----
+   CONSTANT SIZE    =    299    ----
+   XDATA SIZE       =     11       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

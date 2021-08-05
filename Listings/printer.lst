@@ -1,0 +1,230 @@
+C51 COMPILER V9.59.0.0   PRINTER                                                           08/12/2019 16:06:33 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PRINTER
+OBJECT MODULE PLACED IN .\Objects\printer.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE printer.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\printer.lst) TABS(2) OBJECT(.\Objects\printer.obj)
+
+line level    source
+
+   1          //#include <printer.h>
+   2          //#include <string.h>
+   3          /*
+   4          #define EOT 0x04
+   5          #define ENQ 0x05
+   6          #define ACK 0x06
+   7          #define CR  0x0d
+   8          #define LF  0x0a
+   9          #define DLE 0x10
+  10          #define ESC 0x1B
+  11          #define GS  0x1D
+  12          #define SP  0x20
+  13          */
+  14          //extern int printf   (const char *, ...);
+  15          //extern char putchar (char);
+  16          
+  17          /*------------------------------------------------
+  18          Cmd de inicio de impresora
+  19          ------------------------------------------------*/
+  20          /*void Inicializa_Print(void)
+  21          {
+  22            putchar(ESC);
+  23            putchar('@');
+  24          }
+  25          */
+  26          /*------------------------------------------------
+  27          Cmd de justificado del texto
+  28          ------------------------------------------------*/
+  29          //void Justify(unsigned char dato_print)
+  30          //{
+  31          //  switch (dato_print)
+  32            /*{
+  33          
+  34          /     case 'L':
+  35                  JustificaIzq();
+  36                break;
+  37                case 'C':
+  38                  Centrado();
+  39                break;
+  40                case 'R':
+  41                  JustificaDrc();
+  42                break;
+  43              
+  44                default:
+  45                
+  46                break;
+  47              }
+  48            
+  49          }
+  50          */
+  51          /*
+  52          void Posicion_tabulacion(void)
+  53          {
+  54            putchar(ESC);
+C51 COMPILER V9.59.0.0   PRINTER                                                           08/12/2019 16:06:33 PAGE 2   
+
+  55            putchar('D');
+  56            putchar(0x35);
+  57            putchar(0);
+  58          }
+  59          
+  60          void Move_car()
+  61          {
+  62            putchar(GS);
+  63            putchar('P');
+  64            putchar(0xB4);
+  65            putchar(0XB4);
+  66          }
+  67          */
+  68          //********************************************************************************************************
+             -***
+  69          /*
+  70          void Status(unsigned char StatusConsulta)
+  71          {
+  72            
+  73            putchar(DLE);
+  74            putchar(EOT);
+  75            putchar(StatusConsulta);
+  76          }
+  77          
+  78          void MargenIzq(void)
+  79          {
+  80            putchar(GS);
+  81            putchar('L'); 
+  82            putchar(0x10);
+  83            putchar(0x00);
+  84          }
+  85          //********************************************************************************************************
+             -***
+  86          void Bold(void)
+  87          {
+  88            putchar(ESC);
+  89            putchar('E'); 
+  90            putchar(0x01);
+  91          }*/
+  92          /*-----------------------------------------------------------------------------------------------
+  93          posicion del texto
+  94          (C)= 0 centrado
+  95          (l)= 1 justificado a la izquierda
+  96          (2)= 2  Justificado a la derecha
+  97          -------------------------------------------------------------------------------------------------*/ 
+  98          /*
+  99          void JustificaIzq(void)
+ 100          {
+ 101            putchar(ESC);
+ 102            putchar('a'); 
+ 103            putchar('0');
+ 104          }
+ 105          
+ 106          void Centrado(void)
+ 107          {
+ 108            putchar(ESC);
+ 109            putchar('a'); 
+ 110            putchar('1');
+ 111          }
+ 112          
+ 113          void JustificaDrc(void)
+ 114          {
+C51 COMPILER V9.59.0.0   PRINTER                                                           08/12/2019 16:06:33 PAGE 3   
+
+ 115            putchar(ESC);
+ 116            putchar('a'); 
+ 117            putchar('2');
+ 118          }
+ 119          */
+ 120          /*------------------------------------------------
+ 121          Cmd tamaño del caracter  impresora
+ 122          00 tamaño normal
+ 123          0x11  tamaño grande
+ 124          ------------------------------------------------*/
+ 125          /*
+ 126          void Tamaño_Char(unsigned char tamaño)
+ 127          {
+ 128            putchar(GS);
+ 129            putchar('!');
+ 130            putchar(tamaño);
+ 131          }
+ 132          */
+ 133          /*------------------------------------------------
+ 134          Cmd de alimenta el papel N lineas 
+ 135          ------------------------------------------------*/
+ 136          /*
+ 137          void Alimenta_nline(unsigned char nline)
+ 138          {
+ 139            putchar(ESC);
+ 140            putchar('d');
+ 141            putchar(nline);
+ 142          }
+ 143          void Alimentar_paper(unsigned char nline)
+ 144          {
+ 145            putchar(ESC);
+ 146            putchar('J');
+ 147            putchar(nline);
+ 148          }
+ 149          */
+ 150          /*------------------------------------------------
+ 151          Cmd de ESPACIOS ENTRE CARACTERES 
+ 152          0= normal
+ 153          1= separacion de espacios entre caracter
+ 154          ------------------------------------------------*/
+ 155          /*
+ 156          void Espcs_ent_chr(unsigned char espacios)
+ 157          {
+ 158            putchar(ESC);
+ 159            putchar(SP);
+ 160            putchar(espacios);
+ 161          }
+ 162          */
+ 163          //********************************************************************************************************
+             -***
+ 164          /*
+ 165          void QR_Size(void)
+ 166          {
+ 167            putchar(GS);
+ 168            putchar('q'); 
+ 169            putchar(EOT);
+ 170          
+ 171          }
+ 172          //********************************************************************************************************
+             -***
+ 173          void FullCut(void)
+ 174          {
+C51 COMPILER V9.59.0.0   PRINTER                                                           08/12/2019 16:06:33 PAGE 4   
+
+ 175            putchar(ESC);
+ 176            putchar('i'); 
+ 177          }
+ 178          */
+ 179          //void Print_ticket()
+ 180          ///{
+ 181          //    Inicializa_Print();                         /*cmd de inicio de impresora*/
+ 182            //  Posicion_tabulacion();                      /*posiciona el carro*/
+ 183            //  Move_car();                                 /*establece las unidades de movimiento H y V*/
+ 184            //  Justify('C')                                /*texto justificado al centro*/
+ 185            //  Bold();                                     /*pone el texto en negrilla*/
+ 186            //  Tamaño_Char(0x11);                            /*tamaño del caracter*/           
+ 187            //  Espcs_ent_chr(01);                          /*espacio entre caracteres*/
+ 188            //  Alimentar_paper(06);                        /*alimenta el papel y se posiciona para imprimir*/
+ 189            //  LeerMemoria(EE_PARQUEADERO,buffer); 
+ 190            //  printf("%s\n",buffer);                      /*nombre del parqueadero*/
+ 191              
+ 192            
+ 193                //    printf("TEL. 7456434-7456672\r\n\r\n"); 
+ 194            
+ 195            
+ 196          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

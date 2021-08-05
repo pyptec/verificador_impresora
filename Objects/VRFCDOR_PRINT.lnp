@@ -1,0 +1,16 @@
+".\Objects\main.obj",
+".\Objects\Clock.obj",
+".\Objects\delay.obj",
+".\Objects\eeprom.obj",
+".\Objects\io_sensores.obj",
+".\Objects\monitor.obj",
+".\Objects\num_serie.obj",
+".\Objects\pantallas.obj",
+".\Objects\prog.obj",
+".\Objects\pto_paralelo.obj",
+".\Objects\tibbo.obj",
+".\Objects\uart.obj",
+".\Objects\Accescan.obj",
+".\Objects\verprint.obj" 
+TO ".\Objects\VRFCDOR_PRINT" 
+PRINT(".\Listings\VRFCDOR_PRINT.m51") RAMSIZE(256) 

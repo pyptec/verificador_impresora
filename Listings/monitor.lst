@@ -1,0 +1,348 @@
+C51 COMPILER V9.59.0.0   MONITOR                                                           01/20/2020 12:19:01 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MONITOR
+OBJECT MODULE PLACED IN .\Objects\monitor.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE monitor.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\vrfcdor_impresora) DE
+                    -BUG OBJECTEXTEND PRINT(.\Listings\monitor.lst) TABS(2) OBJECT(.\Objects\monitor.obj)
+
+line level    source
+
+   1          #include <monitor.h>
+   2          #include <reg51.h>
+   3          #include <string.h>
+   4          
+   5          /*variables globales */
+   6          extern unsigned char Timer_wait;
+   7          extern unsigned char USE_LPR;
+   8          extern unsigned char  Debug_Tibbo;
+   9          extern unsigned char ValTimeOutCom;   
+  10          extern unsigned char Tipo_Vehiculo;
+  11          extern unsigned char placa[];
+  12          
+  13          /*configuracion bits*/
+  14          
+  15          sbit rx_ip = P0^0;  
+  16          sbit lock = P1^7;           //Relevo 
+  17          
+  18          /*externos bits*/
+  19          
+  20          extern bit placa_ready;
+  21          
+  22          /*funciones prototipo*/
+  23          extern unsigned char rx_Data(void);
+  24          extern unsigned char Dir_board();
+  25          extern void serie_ascii_siceros_l(unsigned char *serie);
+  26          extern void Block_read_clock_ascii(unsigned char *datos_clock);
+  27          extern void DebugBufferMF(unsigned char *str,unsigned char num_char,char io);
+  28          extern void tx_aux(unsigned char caracter);
+  29          extern unsigned char hex_bcd (unsigned char byte);
+  30          extern void serie_ascii_siceros_l(unsigned char *serie);
+  31          
+  32          
+  33          #define STX                     02 
+  34          #define ETX                     03 
+  35          /*------------------------------------------------------------------------------
+  36          Rutina q recibe  los cmd de Monitor por el tibbo
+  37          return el num de caracteres recibidos
+  38          y almacena la trama en un apuntador
+  39          ------------------------------------------------------------------------------*/
+  40          unsigned char recibe_cmd_Monitor(unsigned char *buffer)
+  41          {
+  42   1        unsigned char j, NumDatos,time_out,MaxChrRx;
+  43   1        unsigned int contador;
+  44   1        
+  45   1          NumDatos=0;
+  46   1          MaxChrRx=12;
+  47   1      
+  48   1        if (USE_LPR==1)
+  49   1        {
+  50   2            for (j=0; j<MaxChrRx; j++)
+  51   2            {
+  52   3              contador=0;
+  53   3              time_out=0;
+  54   3              while ((rx_ip==1)&&(time_out==0))
+C51 COMPILER V9.59.0.0   MONITOR                                                           01/20/2020 12:19:01 PAGE 2   
+
+  55   3              {
+  56   4                contador++;
+  57   4                if (contador>30000)
+  58   4                {
+  59   5                  time_out=1;
+  60   5                  j=MaxChrRx;
+  61   5                }       
+  62   4              }
+  63   3              if(time_out==1)break;
+  64   3                
+  65   3              *buffer=rx_Data();
+  66   3                buffer++;
+  67   3                NumDatos++; 
+  68   3            }
+  69   2                  
+  70   2          *buffer=0;
+  71   2        }
+  72   1        return  NumDatos;
+  73   1      } 
+  74          
+  75          /*------------------------------------------------------------------------------
+  76          Rutina q valida los cmd de Monitor
+  77          ------------------------------------------------------------------------------*/
+  78          
+  79          void Valida_Trama_Monitor(unsigned char *buffer, unsigned char length_trama)
+  80          {   
+  81   1        unsigned char j=0;
+  82   1        unsigned char p=2;
+  83   1        length_trama=1;
+  84   1          if  ((*(buffer+2)==ETX)&&(*(buffer+1)=='P'))                                                                            /* APERTURA DE BARRETA
+             -*/ 
+  85   1              {
+  86   2                lock=1;                                                                                                           /*habilita el relevo ON*/
+  87   2                Timer_wait=0;
+  88   2              }
+  89   1          else if (*(buffer+1)=='<')
+  90   1          {
+  91   2            /*placa*/
+  92   2            do
+  93   2            {
+  94   3              placa[j]=*(buffer+p);
+  95   3              p++;
+  96   3              j++;
+  97   3            }while (*(buffer+p) != ETX);
+  98   2            *(buffer+p)=0;
+  99   2              placa[j-1]=0;
+ 100   2              placa_ready=1;
+ 101   2            //ValTimeOutCom=10;
+ 102   2            /*placa no play <NO_PLATE>*/ 
+ 103   2            
+ 104   2          }
+ 105   1          else if (*(buffer+1)=='[')
+ 106   1          {
+ 107   2            /*cancel*/
+ 108   2          }
+ 109   1      }
+ 110          /*------------------------------------------------------------------------------
+ 111          Comando de la tarjeta para monitor
+ 112          indica la entrada de un vehiculo, envia el tipo de vehiculo detectado
+ 113          (E) cmd que indica salida
+ 114          ------------------------------------------------------------------------------*/
+ 115          /*no usado para esta aplicacion*/
+C51 COMPILER V9.59.0.0   MONITOR                                                           01/20/2020 12:19:01 PAGE 3   
+
+ 116          //void Cmd_Monitor(unsigned char cmd)
+ 117          //{
+ 118          //  unsigned char p,t=0;
+ 119          //  unsigned char serie[10];
+ 120          //  static unsigned char Buffer_Lpr[30];
+ 121          //  unsigned char j=3;
+ 122          //  Buffer_Lpr[0]=STX;                                      /*inicio de cmd STx*/
+ 123          //  Buffer_Lpr[1]=Dir_board();                              /*direccion de la tarjeta*/
+ 124          //  Buffer_Lpr[2]=cmd;                                      /*cmd S que salida wiegand*/
+ 125          //  if(Tipo_Vehiculo!=0)                                    /*Tipo de vehiculo*/
+ 126          //    {
+ 127          //      Buffer_Lpr[j++]='M';                                /*moto*/
+ 128          //    }
+ 129          //    else
+ 130          //    {
+ 131          //      Buffer_Lpr[j++]='C';                                /*carro*/
+ 132          //    }
+ 133          //      serie_ascii_siceros_l(serie);
+ 134          //      p=strlen(serie);
+ 135          //  do
+ 136          //  {
+ 137          //   Buffer_Lpr[j++]=serie[t];                              /*ticket o consecutivo*/
+ 138          //    p--;
+ 139          //    t++;
+ 140          //  }while (p!=0);  
+ 141          //  Buffer_Lpr[j++]=':';                                /*separador del tab  o tarjeta MF*/
+ 142                            
+ 143          //  Block_read_clock_ascii(Buffer_Lpr+j);               /*año,mes,dia,hora,minutos,*/
+ 144            
+ 145          //  Buffer_Lpr[j+10]=':';                               /*separador fecha*/
+ 146          //  Buffer_Lpr[j+11]=ETX;                               /*fin de la trama*/
+ 147              
+ 148                    
+ 149          //  DebugBufferMF(Buffer_Lpr,j+12,0);   
+ 150          //  Monitor_chr(Buffer_Lpr,j+12);                       /*rutina de envio de la trama a monitor*/
+ 151          //}
+ 152          
+ 153          /*------------------------------------------------------------------------------
+ 154          Transmito un caracter al software monitor 
+ 155          ------------------------------------------------------------------------------*/
+ 156          void Monitor_chr (unsigned char *str,unsigned char num_char)
+ 157          {
+ 158   1        unsigned char j;
+ 159   1        for (j=0; j<num_char; j++)
+ 160   1          {
+ 161   2          tx_aux(*str);
+ 162   2          str++;
+ 163   2          }
+ 164   1      }
+ 165            
+ 166          /*------------------------------------------------------------------------------
+ 167          Transmito CMD de salida wiegand 
+ 168          ------------------------------------------------------------------------------*/
+ 169          void Cmd_LPR_Salida_wiegand(unsigned char *buffer)
+ 170          {
+ 171   1        unsigned char Buffer_Lpr[30];
+ 172   1        unsigned char j=3;
+ 173   1        Buffer_Lpr[0]=STX;                                      /*inicio de cmd STx*/
+ 174   1        Buffer_Lpr[1]=Dir_board();                              /*direccion de la tarjeta*/
+ 175   1        Buffer_Lpr[2]='S';                                      /*cmd S que salida wiegand*/
+ 176   1        if(Tipo_Vehiculo!=0)                                    /*Tipo de vehiculo*/
+ 177   1          {
+C51 COMPILER V9.59.0.0   MONITOR                                                           01/20/2020 12:19:01 PAGE 4   
+
+ 178   2            Buffer_Lpr[j++]='M';                                /*moto*/
+ 179   2          }
+ 180   1          else
+ 181   1          {
+ 182   2            Buffer_Lpr[j++]='C';                                /*carro*/
+ 183   2          }
+ 184   1        
+ 185   1          
+ 186   1          
+ 187   1          for (j=4; *buffer != '\0'; j++)                       /*numero del tab o tarjeta Mf*/
+ 188   1            {
+ 189   2                Buffer_Lpr[j]=*buffer;
+ 190   2                buffer++;
+ 191   2              
+ 192   2            }
+ 193   1            Buffer_Lpr[j++]=':';                                /*separador del tab  o tarjeta MF*/
+ 194   1                        
+ 195   1            Block_read_clock_ascii(Buffer_Lpr+j);               /*año,mes,dia,hora,minutos,*/
+ 196   1            Buffer_Lpr[j+10]=':';                               /*separador fecha*/
+ 197   1            Buffer_Lpr[j+11]=ETX;                               /*fin de la trama*/
+ 198   1          
+ 199   1                
+ 200   1          
+ 201   1            Monitor_chr(Buffer_Lpr,j+12);                       /*rutina de envio de la trama a monitor*/
+ 202   1      }
+ 203          /*------------------------------------------------------------------------------
+ 204          
+ 205          ------------------------------------------------------------------------------*/
+ 206          /*TEMPORALMENTE FUERA DE SERVICIO*/
+ 207          
+ 208          //void Cmd_LPR_Salida(unsigned char *buffer_S1_B0,unsigned char *buffer_S1_B2)
+ 209          //{
+ 210            
+ 211            
+ 212          //  unsigned char Buffer_Lpr[30];
+ 213          //  unsigned temp;
+ 214          //  unsigned char j=3;
+ 215          //  Buffer_Lpr[0]=STX;                                /*inicio de cmd STx*/
+ 216          //  Buffer_Lpr[1]=Dir_board();                        /*direccion de la tarjeta*/
+ 217          //  Buffer_Lpr[2]='S';                                /*numero de digitos de transmicion NO IMPORTA NO ES VALIDADO EN PRINC
+             -IPAL*/
+ 218            
+ 219          //    if(*(buffer_S1_B2+8)!=0)                        /*Tipo de vehiculo*/
+ 220          //    {
+ 221          //      Buffer_Lpr[j++]='M';                          /*moto*/
+ 222          //    }
+ 223          //    else
+ 224          //    {
+ 225          //      Buffer_Lpr[j++]='C';                          /*carro*/
+ 226          //    }
+ 227            
+ 228            
+ 229          //  do
+ 230          //  {
+ 231          //   Buffer_Lpr[j++]=*buffer_S1_B0;                 /*ticket o consecutivo*/
+ 232          //    buffer_S1_B0++;
+ 233          //  }while (*buffer_S1_B0!=0);
+ 234            
+ 235            
+ 236            
+ 237            
+ 238            
+C51 COMPILER V9.59.0.0   MONITOR                                                           01/20/2020 12:19:01 PAGE 5   
+
+ 239          //    Buffer_Lpr[j++]=':';                            /*separador de la fecha de entrada*/
+ 240          
+ 241          //    temp=hex_bcd(*(buffer_S1_B2+0));                /*año a ascii*/
+ 242          //    Buffer_Lpr[j++]=((temp & 0xf0)>>4)| 0x30;
+ 243          //    Buffer_Lpr[j++]=((temp & 0x0f))| 0x30;
+ 244              
+ 245          //    temp=hex_bcd(*(buffer_S1_B2+1));                /*mes a ascii*/
+ 246          //    Buffer_Lpr[j++]=((temp & 0xf0)>>4)| 0x30;
+ 247          //    Buffer_Lpr[j++]=((temp & 0x0f))| 0x30;
+ 248            
+ 249          //    temp=hex_bcd(*(buffer_S1_B2+2));                /*Dia a ascii*/
+ 250          //    Buffer_Lpr[j++]=((temp & 0xf0)>>4)| 0x30;
+ 251          //    Buffer_Lpr[j++]=((temp & 0x0f))| 0x30;
+ 252            
+ 253          //    temp=hex_bcd(*(buffer_S1_B2+3));                /*Hora a ascii*/
+ 254          //    Buffer_Lpr[j++]=((temp & 0xf0)>>4)| 0x30;
+ 255          //    Buffer_Lpr[j++]=((temp & 0x0f))| 0x30;
+ 256            
+ 257          //    temp=hex_bcd(*(buffer_S1_B2+4));                /*Minutos a ascii*/
+ 258          //    Buffer_Lpr[j++]=((temp & 0xf0)>>4)| 0x30;
+ 259          //    Buffer_Lpr[j++]=((temp & 0x0f))| 0x30;
+ 260            
+ 261              
+ 262            
+ 263          //    Buffer_Lpr[j++]=':';                            /*separador tipo fecha*/
+ 264                                                              /**/
+ 265                  
+ 266          //    Buffer_Lpr[j++]=ETX;  
+ 267            
+ 268          //    Monitor_chr(Buffer_Lpr,j);                        /*rutina de envio de la trama a monitor*/
+ 269          //}
+ 270          void Cmd_LPR_Salida_print(unsigned char *msj,unsigned char vehiculo)
+ 271          {
+ 272   1        
+ 273   1        unsigned char Buffer_Lpr[30];
+ 274   1        unsigned char j;
+ 275   1        unsigned char temp[4];
+ 276   1        Buffer_Lpr[0]=STX;                                /*inicio de cmd STx*/
+ 277   1        Buffer_Lpr[1]=Dir_board();                        /*direccion de la tarjeta*/
+ 278   1        Buffer_Lpr[2]='S';
+ 279   1        Buffer_Lpr[3]=0;                                  /*finalizo la trama para sumarla con la otra trama*/
+ 280   1        temp[0]=vehiculo;
+ 281   1        temp[1]=0;                                          
+ 282   1        strcat(Buffer_Lpr,temp);                          /*Tipo de vehiculo*/
+ 283   1        strcat(Buffer_Lpr,msj);                           /*une los dos strim copio el Ticket */
+ 284   1        temp[0]=':';
+ 285   1        temp[1]=0;
+ 286   1        strcat(Buffer_Lpr,temp);                            /*une los dos strim copio los : del inicio de trama de fecha */
+ 287   1        j=strlen(Buffer_Lpr);                             /*longitud de la trama*/
+ 288   1        
+ 289   1        Block_read_clock_ascii(Buffer_Lpr+j);             /*leo la fecha*/
+ 290   1        
+ 291   1      
+ 292   1        Buffer_Lpr[j+10]=':'; 
+ 293   1        Buffer_Lpr[j+11]=ETX;
+ 294   1        Buffer_Lpr[j+12]=0;
+ 295   1        Buffer_Lpr[j+13]=0;
+ 296   1        //strcat(Buffer_Lpr,":");                 /*sumo fecha de salida y tipo de vehiculo*/ 
+ 297   1        j=strlen(Buffer_Lpr);
+ 298   1        //Buffer_Lpr[j]=ETX;                               /*le sumo el fin de la trama*/ 
+ 299   1        Monitor_chr(Buffer_Lpr,j);                        /*rutina de envio de la trama a monitor*/
+ 300   1      
+C51 COMPILER V9.59.0.0   MONITOR                                                           01/20/2020 12:19:01 PAGE 6   
+
+ 301   1      }
+ 302          /*
+ 303          void clear_placa()
+ 304          {
+ 305            unsigned char i;
+ 306            for(i=0;i<9;i++)
+ 307            {
+ 308             placa[i]=0;
+ 309            }
+ 310             placa_ready=0;
+ 311          }
+ 312          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    814    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      87
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

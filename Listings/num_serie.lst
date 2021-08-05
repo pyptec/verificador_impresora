@@ -1,0 +1,143 @@
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         01/20/2020 12:19:01 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE NUM_SERIE
+OBJECT MODULE PLACED IN .\Objects\num_serie.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE num_serie.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\vrfcdor_impresora) 
+                    -DEBUG OBJECTEXTEND PRINT(.\Listings\num_serie.lst) TABS(2) OBJECT(.\Objects\num_serie.obj)
+
+line level    source
+
+   1          #include <num_serie.h>
+   2          
+   3          /*concecutivo de la factura*/
+   4          #define EE_CONSECUTIVO3 0X0500
+   5          
+   6          
+   7          /*funciones prototipo*/
+   8          
+   9          extern void LeerMemoria(unsigned int addres,unsigned char *res);
+  10          extern void EscribirMemoria(unsigned char control,unsigned int  addres,unsigned char  *res);
+  11          extern long   atol (const char *s1);
+  12          extern int sprintf  (char *, const char *, ...);
+  13          /*--------------------------------------------------------------------------------------------------------
+             --------------------------------
+  14          escribe el numero consecutivo del recibo en eeprom 
+  15          el dato llega en ascii y se convierte a hex y se almacena en eeprom
+  16          ----------------------------------------------------------------------------------------------------------
+             -------------------------------*/
+  17          
+  18          void graba_serie_ascii_hex(unsigned char *buffer)
+  19          {
+  20   1        
+  21   1          
+  22   1          *(buffer+10)=0;
+  23   1          EscribirMemoria(0xa8,EE_CONSECUTIVO3,buffer);
+  24   1      }
+  25          /*--------------------------------------------------------------------------------------------------------
+             --------------------------------
+  26          se recibe el dato en hex en un long  yse transforma en un arreglo
+  27          en  hex y se escribe en eeprom
+  28          ----------------------------------------------------------------------------------------------------------
+             -------------------------------*/
+  29          /*
+  30          void graba_serie(unsigned long int numero)
+  31          {
+  32              unsigned char cod_serie[10];
+  33              sprintf(cod_serie,"%lu",numero);
+  34              EscribirMemoria(0xa8,EE_CONSECUTIVO3,cod_serie);
+  35          }
+  36          */
+  37          /*--------------------------------------------------------------------------------------------------------
+             --------------------------------
+  38          leo la serie de eeprom y la debuelvo en 
+  39          un long int en hex
+  40          ----------------------------------------------------------------------------------------------------------
+             -------------------------------*/
+  41          
+  42          unsigned long int  Leer_serie ()
+  43          {
+  44   1        unsigned long int numero;
+  45   1        unsigned char cod_serie[10];
+  46   1        
+  47   1        LeerMemoria(EE_CONSECUTIVO3,cod_serie);
+  48   1        return numero= atol(cod_serie);
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         01/20/2020 12:19:01 PAGE 2   
+
+  49   1        
+  50   1      } 
+  51          /*--------------------------------------------------------------------------------------------------------
+             --------------------------------
+  52          incremento el numero de serie y lo grabo en eeprom
+  53          ----------------------------------------------------------------------------------------------------------
+             -------------------------------*/
+  54          /*
+  55          void incremente_serie()
+  56          {
+  57            long int numero;
+  58           
+  59            numero=Leer_serie ();                   /*leo la serie de eeprom*/
+  60          /*  numero++;
+  61            
+  62            graba_serie(numero);
+  63            
+  64            
+  65          }
+  66          */
+  67          /*--------------------------------------------------------------------------------------------------------
+             --------------------------------
+  68          rutina que quita los ceros a la izquierda en ascii 0x30 y los cambia  por cero
+  69          al primer caracter diferente de cero ascii 0x30 aborta la funcion
+  70          ----------------------------------------------------------------------------------------------------------
+             -------------------------------*/
+  71          
+  72          void ceros_izq(unsigned char *dato)
+  73          {
+  74   1        unsigned char p,j,temp;
+  75   1      
+  76   1            p=9;
+  77   1            for (j=0; j<10; j++)
+  78   1            {
+  79   2              temp=*(dato+(p-j));
+  80   2              if (temp==0x30)
+  81   2              {
+  82   3               *(dato+(p-j))=0;
+  83   3              }
+  84   2              else
+  85   2              {
+  86   3                break;
+  87   3              } 
+  88   2            }
+  89   1      } 
+  90          /*--------------------------------------------------------------------------------------------------------
+             --------------------------------
+  91          leo la serie en eeprom en hex y lo paso a ascii
+  92          y elimino los ceros a la izquierda
+  93          ----------------------------------------------------------------------------------------------------------
+             -------------------------------*/
+  94          void serie_ascii_siceros_l(unsigned char *serie)
+  95          {
+  96   1        unsigned long int numero;
+  97   1        
+  98   1      
+  99   1        numero=Leer_serie ();
+ 100   1        sprintf(serie,"%lu",numero);
+ 101   1        ceros_izq(serie);
+ 102   1      
+ 103   1      }
+
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         01/20/2020 12:19:01 PAGE 3   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    165    ----
+   CONSTANT SIZE    =      4    ----
+   XDATA SIZE       =   ----      19
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

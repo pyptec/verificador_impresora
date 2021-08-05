@@ -1,0 +1,321 @@
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         01/20/2020 12:19:01 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PANTALLAS
+OBJECT MODULE PLACED IN .\Objects\pantallas.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE pantallas.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\vrfcdor_impresora) 
+                    -DEBUG OBJECTEXTEND PRINT(.\Listings\pantallas.lst) TABS(2) OBJECT(.\Objects\pantallas.obj)
+
+line level    source
+
+   1          #include<pantallas.h>
+   2          #include <reg51.h>
+   3          #include <string.h>
+   4          
+   5          sbit sel_com = P0^7;        //Micro switch  
+   6          /* varibles externas*/
+   7          extern  unsigned char Tipo_Vehiculo;  
+   8          
+   9          /*funciones externas*/
+  10          extern char putchar (char c);
+  11          extern void Block_read_Clock(unsigned char *datos_clock);
+  12          extern void DebugBufferMF(unsigned char *str,unsigned char num_char,char io);
+  13          extern void Debug_Dividir_texto();
+  14          extern void clean_tx();
+  15          extern void serie_ascii_siceros_l(unsigned char *serie);
+  16          extern void clear_buffer();
+  17          
+  18          #define ERROR_LOOP              0XE0
+  19          #define TARJETA_INVALIDA        0XE1
+  20          #define TARJETA_SIN_FORMATO     0xDF
+  21          #define ERROR_COD_PARK          0XE5
+  22          #define SIN_INGRESO             0XE6
+  23          #define SIN_PAGO                0XE7
+  24          #define EXCEDE_GRACIA           0XE8
+  25          #define FUERA_DE_LINEA          0XB6
+  26          #define LECTURA_DE_TARJETAS     0xB0
+  27          
+  28          #define INGRESO                 0xFA
+  29          #define BIENVENIDO              0XFE
+  30          #define GRACIAS                 0XFF
+  31          
+  32          #define NOTIFIQUE_EVP           'N'
+  33          #define NO_NOTIFIQUE_EVP        'S'
+  34          #define COMPARANDO_PLACA        'P'           /*msj de error de placa*/
+  35          #define ENVIANDO_COD            'D'
+  36          #define INFO1                   'I'
+  37          #define INFO2                   'i'
+  38          
+  39          
+  40          #define NUL                     0x00
+  41          #define SOH                     0x01
+  42          #define STX                     0x02
+  43          
+  44          #define CAN                     0X18
+  45          
+  46          
+  47          /*------------------------------------------------------------------------------
+  48          transmite el caracter pto serie
+  49          data_com = al caracter a escribir
+  50          enable_char_add = si esta en (1) envia un null (0) adicional, si es (0) no envia caracter adicional
+  51          ------------------------------------------------------------------------------*/
+  52          void tx_chrlcd (unsigned char data_com, unsigned char enable_char_add)
+  53          {
+  54   1        unsigned char d;
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         01/20/2020 12:19:01 PAGE 2   
+
+  55   1        
+  56   1        d=putchar(data_com);
+  57   1        if (enable_char_add != 0) 
+  58   1          {d=putchar(0x00);}
+  59   1      
+  60   1          
+  61   1      }
+  62          /*------------------------------------------------------------------------------
+  63          envia un msj asta null(0)
+  64          msg= apuntador del msj
+  65          enable_char_add = si esta en (1) envia un null. (0) adicional, si es (0) no envia caracter adicional
+  66          ------------------------------------------------------------------------------*/
+  67          void LCD_txt (unsigned char * msg,unsigned char enable_char_add )
+  68          {
+  69   1        unsigned char i;
+  70   1        
+  71   1        for (i=0; msg[i] != '\0'; i++)
+  72   1        {
+  73   2          tx_chrlcd(msg[i],enable_char_add);
+  74   2        }
+  75   1      }
+  76          /*------------------------------------------------------------------------------
+  77          Escribo el reloj en ascii en bloque 
+  78          msg= apuntador del msj
+  79          length_char longitud de la tram
+  80          enable_char_add = si esta en (1) envia un null (0) adicional, si es (0) no envia caracter adicional
+  81          ------------------------------------------------------------------------------*/
+  82          void LCD_txt_num_char(unsigned char * msg,unsigned char length_char, unsigned char enable_char_add)
+  83          {
+  84   1        unsigned char i;
+  85   1         
+  86   1        for (i=0; i<length_char; i++)
+  87   1        {
+  88   2          tx_chrlcd(msg[i],enable_char_add);
+  89   2        }
+  90   1      }
+  91          /*------------------------------------------------------------------------------
+  92          Escribo el reloj en ascii en bloque 
+  93          AA 80 28 trama de inicio de configuracion de la pantalla
+  94          07 numero de caracteres de la trama de reloj
+  95          20 19 03 26 09 21 20  el dato del reloj
+  96          ------------------------------------------------------------------------------*/
+  97          void Reloj_Pantalla_Lcd()
+  98          {
+  99   1      
+ 100   1       unsigned char Ini_Clock_LCD   []={0xaa,0x80,0x28,0x07,0x20,0x00,0,0,0,0,20,0,0} ;
+ 101   1                sel_com=0;                                                                      /*switch del pto serie a la pantalla*/
+ 102   1                Block_read_Clock(Ini_Clock_LCD+5);                                              /*Leo el reloj programado*/
+ 103   1                //Debug_Dividir_texto();                                                          /*lineas de separacion del texto*/
+ 104   1                //DebugBufferMF(Ini_Clock_LCD,12,0);                                              /*muestra la trama por debug*/
+ 105   1                //Debug_Dividir_texto();                                                          /*linea de separacion de texto*/
+ 106   1                REN = 0;                                                                        /*inhabilita recepcion de datos*/
+ 107   1                LCD_txt_num_char(Ini_Clock_LCD,13,0);                                           /*cmd de inicializacion del reloj del lcd*
+             -/
+ 108   1                                                            
+ 109   1                REN = 1;                                                                        /*habilita recepcion de datos*/
+ 110   1                sel_com=1;                                                                      /*switch pto serie a verificador o expedidor */
+ 111   1      }
+ 112          /*------------------------------------------------------------------------------
+ 113          Rutina de msj de pantalla
+ 114          0xaa,0x80,0x18 cmd de inicio lcd
+ 115          0x01  numero de linea
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         01/20/2020 12:19:01 PAGE 3   
+
+ 116          0x02  tiempo de duracion del msj en minutos si especifica (00)no hay msj en el lcd si es (ff) el msj const
+             -ante
+ 117          0x00,0xnn numero de caracteres a impirmir
+ 118          ------------------------------------------------------------------------------*/
+ 119          void PantallaLCD(unsigned char cod_msg)
+ 120          {
+ 121   1      unsigned char bar[15];
+ 122   1      unsigned char datos[25];
+ 123   1      unsigned char Ini_LCD_Line_one   []={0xaa,0x80,CAN,SOH,STX,0x00} ;
+ 124   1      unsigned char Ini_LCD_Line_two   []={0xaa,0x80,0x18,0x02,0x02,0x00} ;
+ 125   1      
+ 126   1        
+ 127   1      unsigned char num_chr;
+ 128   1      
+ 129   1        
+ 130   1          sel_com=0;
+ 131   1        
+ 132   1          //if (Raspberry==0)
+ 133   1          //{
+ 134   1            LCD_txt (Ini_LCD_Line_one,0);
+ 135   1            
+ 136   1            switch (cod_msg)
+ 137   1            {
+ 138   2          
+ 139   2              case 'P':
+ 140   2                
+ 141   2                num_chr=strlen((unsigned char *) "ERROR: VALIDANDO PLACA... ");
+ 142   2                tx_chrlcd(0x00,0);
+ 143   2                tx_chrlcd(num_chr*2,0);
+ 144   2                LCD_txt ((unsigned char *)       "ERROR: VALIDANDO PLACA... ",1);
+ 145   2                
+ 146   2                break;
+ 147   2      
+ 148   2              case ERROR_LOOP:
+ 149   2                
+ 150   2                num_chr=strlen((unsigned char *) "ERROR: LOOP1 SIN PRESENCIA VEHICULAR ");  
+ 151   2                tx_chrlcd(0x00,0);
+ 152   2                tx_chrlcd(num_chr*2,0);
+ 153   2                LCD_txt ((unsigned char *)       "ERROR: LOOP1 SIN PRESENCIA VEHICULAR ",1);
+ 154   2                
+ 155   2                break;
+ 156   2              
+ 157   2              case TARJETA_INVALIDA:
+ 158   2                
+ 159   2                num_chr=strlen((unsigned char *) "ERROR: TARJETA INVALIDA "); 
+ 160   2                tx_chrlcd(0x00,0);
+ 161   2                tx_chrlcd(num_chr*2,0);
+ 162   2                LCD_txt ((unsigned char *)       "ERROR: TARJETA INVALIDA ",1);
+ 163   2                
+ 164   2                break;
+ 165   2              
+ 166   2              case ERROR_COD_PARK:
+ 167   2          
+ 168   2                num_chr=strlen((unsigned char *) "TARJETA NO ES DEL PARQ. ");
+ 169   2                tx_chrlcd(0x00,0);
+ 170   2                tx_chrlcd(num_chr*2,0);
+ 171   2                LCD_txt ((unsigned char *)       "TARJETA NO ES DEL PARQ. ",1);
+ 172   2          
+ 173   2                break;
+ 174   2                
+ 175   2              case TARJETA_SIN_FORMATO:
+ 176   2          
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         01/20/2020 12:19:01 PAGE 4   
+
+ 177   2                num_chr=strlen((unsigned char *) "TARJETA SIN FORMATO ");
+ 178   2                tx_chrlcd(0x00,0);
+ 179   2                tx_chrlcd(num_chr*2,0);
+ 180   2                LCD_txt((unsigned char *)        "TARJETA SIN FORMATO ",1);
+ 181   2      
+ 182   2                break;
+ 183   2                
+ 184   2              case SIN_PAGO:
+ 185   2          
+ 186   2                num_chr=strlen((unsigned char *) "TARJETA NO REGISTRA PAGO ");
+ 187   2                tx_chrlcd(0x00,0);
+ 188   2                tx_chrlcd(num_chr*2,0);
+ 189   2                LCD_txt ((unsigned char *)       "TARJETA NO REGISTRA PAGO ",1);
+ 190   2      
+ 191   2                break;
+ 192   2                  
+ 193   2              case EXCEDE_GRACIA:
+ 194   2          
+ 195   2                num_chr=strlen((unsigned char *) "EXCEDE TIEMPO DE GRACIA ");
+ 196   2                tx_chrlcd(0x00,0);
+ 197   2                tx_chrlcd(num_chr*2,0);
+ 198   2                LCD_txt ((unsigned char *)       "EXCEDE TIEMPO DE GRACIA ",1);
+ 199   2            
+ 200   2                break;
+ 201   2              
+ 202   2              case  FUERA_DE_LINEA:
+ 203   2                
+ 204   2                num_chr=strlen((unsigned char *) "FUERA DE LINEA ");
+ 205   2                tx_chrlcd(0x00,0);
+ 206   2                tx_chrlcd(num_chr*2,0);
+ 207   2                LCD_txt((unsigned char *)        "FUERA DE LINEA ",1);
+ 208   2              
+ 209   2                break;
+ 210   2              
+ 211   2              case  BIENVENIDO:
+ 212   2                
+ 213   2                num_chr=strlen((unsigned char *) "ACERQUE SU TICKET ");
+ 214   2                tx_chrlcd(0x00,0);
+ 215   2                tx_chrlcd(num_chr*2,0);
+ 216   2                LCD_txt((unsigned char *)        "ACERQUE SU TICKET ",1);
+ 217   2                
+ 218   2                break;
+ 219   2              
+ 220   2              case GRACIAS:
+ 221   2                num_chr=strlen((unsigned char *) "GRACIAS ");
+ 222   2                tx_chrlcd(0x00,0);
+ 223   2                tx_chrlcd(num_chr*2,0);
+ 224   2                LCD_txt((unsigned char *)        "GRACIAS ",1);
+ 225   2                
+ 226   2                break;
+ 227   2              case  SIN_INGRESO:
+ 228   2                
+ 229   2                num_chr=strlen((unsigned char *) "ERROR: SIN INGRESO ");
+ 230   2                tx_chrlcd(0x00,0);
+ 231   2                tx_chrlcd(num_chr*2,0);
+ 232   2                LCD_txt((unsigned char *)        "ERROR: SIN INGRESO ",1);
+ 233   2                
+ 234   2                break;
+ 235   2              case INGRESO:
+ 236   2                serie_ascii_siceros_l(bar);
+ 237   2                strcpy(datos,"TICKET No.");
+ 238   2                strcat(datos,bar);
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         01/20/2020 12:19:01 PAGE 5   
+
+ 239   2              
+ 240   2                num_chr=strlen(datos)+1;
+ 241   2               
+ 242   2              
+ 243   2                tx_chrlcd(0x00,0);
+ 244   2                tx_chrlcd(num_chr*2,0);
+ 245   2                LCD_txt_num_char(datos,num_chr,1);
+ 246   2                              
+ 247   2                break;
+ 248   2        }
+ 249   1              sel_com=1;  
+ 250   1      }
+ 251          void PantallaLCD_LINEA_2(unsigned char cod_msg, unsigned char *buffer)
+ 252          {
+ 253   1        
+ 254   1      unsigned char Ini_LCD_Line_one   []={0xaa,0x80,0x18,0x01,0x02,0x00} ;
+ 255   1      
+ 256   1      
+ 257   1      unsigned char num_chr;
+ 258   1        
+ 259   1      sel_com=0;
+ 260   1        
+ 261   1          //if (Raspberry==0)
+ 262   1          //{
+ 263   1          
+ 264   1            
+ 265   1            switch (cod_msg)
+ 266   1            {
+ 267   2          
+ 268   2              case  LECTURA_DE_TARJETAS:
+ 269   2                LCD_txt (Ini_LCD_Line_one,0);
+ 270   2                num_chr=strlen((unsigned char *) "WIEGAND ");
+ 271   2                num_chr=num_chr+strlen(buffer)+1;
+ 272   2                tx_chrlcd(0x00,0);
+ 273   2                tx_chrlcd(num_chr*2,0);
+ 274   2                LCD_txt((unsigned char *)        "WIEGAND ",1);                       /*funcion q trasmite el msj al LCD  y el 
+             -(1) coloca los caracteres NULL*/
+ 275   2                LCD_txt(buffer,1);                                                    /*funcion q trasmite el msj al LCD  y el (1) coloca los 
+             -caracteres NULL*/
+ 276   2                
+ 277   2              
+ 278   2              
+ 279   2              
+ 280   2                break;
+ 281   2              
+ 282   2              
+ 283   2        }
+ 284   1              sel_com=1;  
+ 285   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    903    ----
+   CONSTANT SIZE    =    302    ----
+   XDATA SIZE       =   ----      91
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

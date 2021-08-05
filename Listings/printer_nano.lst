@@ -1,0 +1,995 @@
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PRINTER_NANO
+OBJECT MODULE PLACED IN .\Objects\printer_nano.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE printer_nano.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\vrfcdor_impresor
+                    -a) DEBUG OBJECTEXTEND PRINT(.\Listings\printer_nano.lst) TABS(2) OBJECT(.\Objects\printer_nano.obj)
+
+line level    source
+
+   1          #include <printer_nano.h>
+   2          #include <reg51.h>
+   3          #include <string.h>
+   4          /*comandos de impresora*/
+   5          #define NUL 0x00
+   6          #define ETX 0x03
+   7          #define EOT 0x04
+   8          #define ENQ 0x05
+   9          #define ACK 0x06
+  10          #define BEL 0X07
+  11          #define CR  0x0d
+  12          #define LF  0x0a
+  13          #define DLE 0x10
+  14          #define ESC 0x1B
+  15          #define GS  0x1D
+  16          #define SP  0x20
+  17          #define DC2 0x12
+  18          #define CODE39  0X04
+  19          #define CODE128 0X73
+  20          
+  21          /*direcciones de memoria de los datos de la factura*/
+  22          
+  23          #define EE_CLIENTE            0X0010
+  24          #define EE_NIT                0x0040
+  25          #define EE_PARQUEADERO        0X0050
+  26          #define EE_ADDRES             0x0080
+  27          #define EE_MSJ1               0X00B0
+  28          #define EE_MSJ2               0X00f1
+  29          #define EE_MSJ3               0X0132
+  30          #define EE_MSJ4               0X0173
+  31          #define EE_MSJ5               0X01b4
+  32          #define EE_MSJ6               0X01f5
+  33          #define EE_MSJ7               0X0236
+  34          /*----------------------------------------------------------------------------
+  35          Definiciones de sequencias de impresion de ticket
+  36          ------------------------------------------------------------------------------*/
+  37          
+  38          #define SEQ_INICIO            0X00  
+  39          #define SEQ_QUEST_PRINT       0X01
+  40          #define SEQ_RTA_QUEST         0x02
+  41          #define SEQ_PRINT             0x03
+  42          #define SEQ_RELEASE           0x04
+  43          /*----------------------------------------------------------------------------
+  44          msj de lcd tarjeta y lcd serie
+  45          ------------------------------------------------------------------------------*/
+  46          
+  47          #define ERROR_LOOP              0XE0
+  48          
+  49          //#define SEQ_CHECK_STATUS      0X02
+  50          /*----------------------------------------------------------------------------
+  51          tiempo de delay entre funciones
+  52          ------------------------------------------------------------------------------*/
+  53          
+  54          #define   TIME_CARD         20    //50
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 2   
+
+  55          #define   TIME_RX           70    //
+  56          #define   TIME_PLACA        55
+  57          #define   TIME_PULSADOR     10
+  58          
+  59          /*----------------------------------------------------------------------------
+  60          definicion de recepcion serial 
+  61          ------------------------------------------------------------------------------*/
+  62          
+  63          #define  ESPERA_RX          0           //espera el primer cmd de recepcion del verificado 
+  64          
+  65          
+  66          /*---------------------------------------------------------------------------------
+  67          definiciones de la pantalla
+  68          -----------------------------------------------------------------------------------*/
+  69          #define INGRESO                 0xFA
+  70          #define BIENVENIDO              0XFE
+  71          #define AUDIO_IN                0XA0
+  72          #define AUDIO_ENTER             0XA1
+  73          /*variables externas*/
+  74          
+  75          extern unsigned char g_cEstadoComSoft;
+  76          extern unsigned char g_cEstadoImpresion;
+  77          extern unsigned char ValTimeOutCom;
+  78          extern unsigned char buffer_ready;
+  79          extern unsigned char Timer_wait;
+  80          extern idata unsigned char  Buffer_Rta_Lintech[];
+  81          extern  unsigned char placa[];
+  82          extern  unsigned char Tipo_Vehiculo;  
+  83          extern  unsigned char QR_BARRAS;
+  84          
+  85          /*funciones prototipo*/
+  86          
+  87          extern char putchar (char);
+  88          
+  89          extern void LeerMemoria(unsigned int addres,unsigned char *res);
+  90          extern int printf   (const char *, ...);
+  91          extern void Block_read_clock_ascii(unsigned char *datos_clock);
+  92          extern void Debug_txt_Tibbo(unsigned char * str);
+  93          extern unsigned char  ValidaSensoresPaso(void);
+  94          extern void sel_Pulsa(void);
+  95          extern void send_portERR(unsigned char cod_err);
+  96          extern void PantallaLCD(unsigned char cod_msg);
+  97          extern void sel_Sensor2(void);
+  98          extern void Cmd_Monitor(unsigned char cmd);
+  99          extern void incremente_serie();
+ 100          extern void Trama_pto_paralelo_printer(unsigned char cmd);
+ 101          extern void DebugBufferMF(unsigned char *str,unsigned char num_char,char io);
+ 102          extern void clear_buffer();
+ 103          extern void serie_ascii_siceros_l(unsigned char *serie);
+ 104          extern void clear_placa();
+ 105          
+ 106          /*pines del micro*/
+ 107          
+ 108          sbit DataIn = P1^1;   
+ 109          sbit lock = P1^7;           //Relevo  
+ 110          /*externo bit*/
+ 111          extern bit placa_ready;
+ 112          //extern bit buffer_ready;
+ 113          /*------------------------------------------------
+ 114          Cmd de inicio de impresora
+ 115          ------------------------------------------------*/
+ 116          void Inicializa_Print(void)
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 3   
+
+ 117          {
+ 118   1        putchar(ESC);
+ 119   1        putchar('@');
+ 120   1      }
+ 121          /*-----------------------------------------------
+ 122          establece posisicon de tabulacion horizontal
+ 123          n=1 - 255 // establece el conjunto de fuentes determinado 0x35
+ 124          k= 0 - 32 //indica el numero de posisicon de tabulacion
+ 125          ------------------------------------------------*/
+ 126          void Posicion_tabulacion(unsigned char n, unsigned char k)
+ 127          {
+ 128   1        putchar(ESC);
+ 129   1        putchar('D');
+ 130   1        putchar(n);
+ 131   1        putchar(k);
+ 132   1      }
+ 133          /*-----------------------------------------------
+ 134          
+ 135          ------------------------------------------------*/
+ 136          void Move_car()
+ 137          {
+ 138   1        putchar(GS);
+ 139   1        putchar('P');
+ 140   1        putchar(0xB4);
+ 141   1        putchar(0XB4);
+ 142   1      }
+ 143          /*------------------------------------------------
+ 144          Cmd de justificado del texto
+ 145          ------------------------------------------------*/
+ 146          void Justify(unsigned char dato_print)
+ 147          {
+ 148   1        switch (dato_print)
+ 149   1        {
+ 150   2      
+ 151   2            case 'L':
+ 152   2              JustificaIzq();
+ 153   2            break;
+ 154   2            case 'C':
+ 155   2              Centrado();
+ 156   2            break;
+ 157   2            case 'R':
+ 158   2              JustificaDrc();
+ 159   2            break;
+ 160   2          
+ 161   2            default:
+ 162   2            
+ 163   2            break;
+ 164   2          }
+ 165   1        
+ 166   1      }
+ 167          /*-----------------------------------------------------------------------------------------------
+ 168          posicion del texto
+ 169          (C)= 0 centrado
+ 170          (l)= 1 justificado a la izquierda
+ 171          (2)= 2  Justificado a la derecha
+ 172          -------------------------------------------------------------------------------------------------*/ 
+ 173          
+ 174          void JustificaIzq(void)
+ 175          {
+ 176   1        putchar(ESC);
+ 177   1        putchar('a'); 
+ 178   1        putchar('0');
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 4   
+
+ 179   1      }
+ 180          
+ 181          void Centrado(void)
+ 182          {
+ 183   1        putchar(ESC);
+ 184   1        putchar('a'); 
+ 185   1        putchar('1');
+ 186   1      }
+ 187          
+ 188          void JustificaDrc(void)
+ 189          {
+ 190   1        putchar(ESC);
+ 191   1        putchar('a'); 
+ 192   1        putchar('2');
+ 193   1      }
+ 194          /*------------------------------------------------
+ 195          Cmd del tipo de fuente o letra
+ 196          '0'
+ 197          '1' TIPO DE LETRA PEQUEÑO
+ 198          '2'
+ 199          '3'
+ 200          '4'
+ 201          ------------------------------------------------*/
+ 202          void Tipo_fuente(unsigned char fuente)
+ 203          {
+ 204   1        putchar(ESC);
+ 205   1        putchar('M'); 
+ 206   1        putchar(fuente);
+ 207   1      } 
+ 208          
+ 209          /*------------------------------------------------
+ 210          Cmd que separa un renglon del otro N lineas 
+ 211          ------------------------------------------------*/
+ 212          void Interlineado(unsigned char n)
+ 213          {
+ 214   1        putchar(ESC);
+ 215   1        putchar('3');
+ 216   1        putchar(n); 
+ 217   1      }
+ 218          /*------------------------------------------------
+ 219          Cmd que pone negrilla
+ 220          00= normal
+ 221          01=negrilla
+ 222          ------------------------------------------------*/
+ 223          void Bold(unsigned char negrilla)
+ 224          {
+ 225   1        putchar(ESC);
+ 226   1        putchar('E'); 
+ 227   1        putchar(negrilla);
+ 228   1      }
+ 229          /*------------------------------------------------
+ 230          Cmd tamaño del caracter  impresora
+ 231          00 tamaño normal
+ 232          Altura
+ 233          0x1 boble altura,0x02 = x3, 0x3 =x4, 0x4 =x5, 0x05=x6, 0x6=x7 0x7 =x8
+ 234          Ancho
+ 235          00 normal
+ 236          0x10  =x2 -------------0x70=x8
+ 237          
+ 238          como se debe aramr el cmd 00 normal, 11 boble de ancho y altura
+ 239          ------------------------------------------------*/
+ 240          
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 5   
+
+ 241          void Tama_letra(unsigned char tama)
+ 242          {
+ 243   1        putchar(GS);
+ 244   1        putchar('!');
+ 245   1        putchar(tama);
+ 246   1      }
+ 247          
+ 248          /*------------------------------------------------
+ 249          Cmd que corre  el papel N lineas 
+ 250          ------------------------------------------------*/
+ 251          
+ 252          void Alimenta_nline(unsigned char nline)
+ 253          {
+ 254   1        putchar(ESC);
+ 255   1        putchar('d');
+ 256   1        putchar(nline);
+ 257   1      }
+ 258          /*------------------------------------------------
+ 259          Cmd que alimenta el  papel N lineas y lo posiciona para escribir 
+ 260          ------------------------------------------------*/
+ 261          void Alimentar_paper(unsigned char nline)
+ 262          {
+ 263   1        putchar(ESC);
+ 264   1        putchar('J');
+ 265   1        putchar(nline);
+ 266   1      }
+ 267          /*------------------------------------------------
+ 268          Cmd de ESPACIOS ENTRE CARACTERES 
+ 269          0= normal
+ 270          1= separacion de espacios entre caracter
+ 271          ------------------------------------------------*/
+ 272          
+ 273          void Espcs_ent_chr(unsigned char espacios)
+ 274          {
+ 275   1        putchar(ESC);
+ 276   1        putchar(SP);
+ 277   1        putchar(espacios);
+ 278   1      }
+ 279          /*------------------------------------------------
+ 280          Cmd que configura el tamaño del codigo de barras
+ 281          el defaul es 162
+ 282          ------------------------------------------------*/
+ 283          void height_code_bar(unsigned char height)
+ 284          {
+ 285   1        putchar(GS);
+ 286   1        putchar('h');
+ 287   1        putchar(height);
+ 288   1      }
+ 289          
+ 290          /*------------------------------------------------
+ 291          Cmd que imprime el codigo  de barras 
+ 292          '0' no lleva 
+ 293          '1' arriba
+ 294          '2' abajo
+ 295          '3' arriba y abajo
+ 296          ------------------------------------------------*/
+ 297          void position_Hri(unsigned char position)
+ 298          {
+ 299   1        putchar(GS);
+ 300   1        putchar('H');
+ 301   1        putchar(position);
+ 302   1      }
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 6   
+
+ 303          /*------------------------------------------------
+ 304          Cmd que busca la fuente de la letra
+ 305          '0' font A (12 - 24)
+ 306          '1' font B (9 -17)
+ 307          ------------------------------------------------*/
+ 308          void Fount_char_hri()
+ 309          {
+ 310   1        putchar(GS);
+ 311   1        putchar('f');
+ 312   1        putchar('0');
+ 313   1      }
+ 314          /*--------------------------------------------------
+ 315          
+ 316          ----------------------------------------------------*/
+ 317          void Prin_cod_barra(unsigned char tipo,unsigned char *bar)
+ 318          {
+ 319   1        unsigned char i;
+ 320   1          putchar(GS);
+ 321   1          putchar('k');
+ 322   1          putchar(tipo);
+ 323   1          for (i=0; bar[i] != '\0'; i++)
+ 324   1          {
+ 325   2              putchar(bar[i]);
+ 326   2          }
+ 327   1      
+ 328   1        
+ 329   1          putchar(NUL);
+ 330   1      }
+ 331          /*------------------------------------------------------
+ 332          funciones del codigo QR
+ 333          --------------------------------------------------------*/
+ 334          void Funcion_165()
+ 335          {
+ 336   1        /*seleccion modelo QR (modelo seleccionado 2)(0x32=50)*/
+ 337   1        putchar(GS);
+ 338   1        putchar('(');
+ 339   1        putchar('k');
+ 340   1        putchar(EOT);
+ 341   1        putchar(NUL);
+ 342   1        putchar(0x31);
+ 343   1        putchar(0x41);
+ 344   1        putchar(0x32);
+ 345   1        putchar(NUL);
+ 346   1        
+ 347   1      }
+ 348          
+ 349          void Funcion_169()
+ 350          {
+ 351   1      /*seleccione el nivel  de correcciones de errores el codigo QR*/  
+ 352   1        putchar(GS);
+ 353   1        putchar('(');
+ 354   1        putchar('k');
+ 355   1        putchar(ETX);
+ 356   1        putchar(NUL);
+ 357   1        putchar(0x31);
+ 358   1        putchar(0x45);
+ 359   1        putchar(0x31);
+ 360   1        
+ 361   1      }
+ 362          
+ 363          void Funcion_167()
+ 364          {
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 7   
+
+ 365   1        /*se establece el tamaño del codigo QR*/
+ 366   1        putchar(GS);
+ 367   1        putchar('(');
+ 368   1        putchar('k');
+ 369   1        putchar(ETX);
+ 370   1        putchar(NUL);
+ 371   1        putchar(0x31);
+ 372   1        putchar(0x43);
+ 373   1        putchar(BEL);
+ 374   1        
+ 375   1      }
+ 376          void Funcion_180(unsigned char *datos)
+ 377          {
+ 378   1        /*almacena el codigo qr*/
+ 379   1        unsigned char pl,i;
+ 380   1        putchar(GS);
+ 381   1        putchar('(');
+ 382   1        putchar('k');
+ 383   1        pl=strlen(datos);
+ 384   1        putchar(pl+3);
+ 385   1        putchar(NUL);
+ 386   1        putchar(0x31);
+ 387   1        putchar(0x50);
+ 388   1        putchar(0x30);
+ 389   1        for (i=0; i < pl; i++)
+ 390   1          {
+ 391   2              putchar(datos[i]);
+ 392   2          } 
+ 393   1      }
+ 394          void Funcion_181()
+ 395          {
+ 396   1        /*imprime el codigo QR*/
+ 397   1        putchar(GS);
+ 398   1        putchar('(');
+ 399   1        putchar('k');
+ 400   1        putchar(ETX);
+ 401   1        putchar(NUL);
+ 402   1        putchar(0x31);
+ 403   1        putchar(0x51);
+ 404   1        putchar(0x30);
+ 405   1      }
+ 406          /*------------------------------------------------
+ 407          Cmd que corta   el papel  
+ 408          ------------------------------------------------*/
+ 409          void FullCut(void)
+ 410          {
+ 411   1        putchar(ESC);
+ 412   1        putchar('i'); 
+ 413   1      }
+ 414          /*------------------------------------------------
+ 415          Cmd que pregunta si hay papel
+ 416          02= off line
+ 417          04= estado del papel si hay o no
+ 418          05= recoger papel
+ 419          
+ 420          ------------------------------------------------*/
+ 421          void Status(unsigned char StatusConsulta)
+ 422          {
+ 423   1        
+ 424   1        putchar(DLE);
+ 425   1        putchar(EOT);
+ 426   1        putchar(StatusConsulta);
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 8   
+
+ 427   1      }
+ 428          /*--------------------------------------------------------------------------------------------------------
+             --
+ 429          se imprime el codigo QR
+ 430          ----------------------------------------------------------------------------------------------------------
+             -*/
+ 431          void Print_cod_QR()
+ 432          {
+ 433   1        unsigned char datos[80];
+ 434   1        unsigned char bar[15];
+ 435   1        
+ 436   1        Funcion_165();                              /*selecciona el modelo del QR*/
+ 437   1        Funcion_169();                              /*selecciona el nivel de correccion de errores*/
+ 438   1        
+ 439   1        Funcion_167();                              /*establece el tamaño del QR*/
+ 440   1      
+ 441   1      /*---------------------Se imprime el numero del ticket------------------------------------------------- */
+ 442   1        strcpy(datos, "Tiquete No: ");                /*datos del qr Tiquete No:*/
+ 443   1        serie_ascii_siceros_l(bar);                 /*numero del tiquete*/
+ 444   1        strcat(datos,bar);                          /*une los dos strim*/
+ 445   1        //strcat(datos,"\n"); 
+ 446   1      /*---------------------Se imprime la fecha de entrada del vehiculo------------------------------------- */
+             -  
+ 447   1        strcat(datos," Fecha: 20");
+ 448   1        Block_read_clock_ascii(bar);                              /*Lee la fecha en ascci*/   
+ 449   1        strncat(datos,bar,2);                                     /*Año*/
+ 450   1        strcat(datos,"-");
+ 451   1        strncat(datos,bar+2,2);                                   /*mes*/
+ 452   1        strcat(datos,"-");                                        
+ 453   1        strncat(datos,bar+4,2);                                   /*dia*/
+ 454   1        strcat(datos," ");                                        
+ 455   1        strncat(datos,bar+6,2);                                   /*Hora*/
+ 456   1        strcat(datos,":");                                        
+ 457   1        strncat(datos,bar+8,2);                                   /*minutos*/
+ 458   1        //strcat(datos,":");                                        
+ 459   1        //strncat(datos,bar+10,2);
+ 460   1        //strcat(datos,"\n");                                       /*segundos*/
+ 461   1      /*---------------------Se imprime el tipo de vehiculo ----------------------------------------------------
+             ----  */  
+ 462   1        if(Tipo_Vehiculo==0)
+ 463   1        {
+ 464   2          strcat(datos," Vehiculo: Carro");
+ 465   2        }
+ 466   1        else
+ 467   1        {
+ 468   2          strcat(datos," Vehiculo: Moto");
+ 469   2        } 
+ 470   1          
+ 471   1      /*---------------------Se imprime el numero de placa del vehiculo-----------------------------------------
+             -------  */
+ 472   1        strcat(datos,"Placa: ");
+ 473   1        strcat(datos,placa);
+ 474   1        strcat(datos,"\n"); 
+ 475   1        Funcion_180(datos);                         /*almacena el codigo QR*/ 
+ 476   1        Funcion_181();                              /*imprime el codigo Qr*/
+ 477   1      }
+ 478          /*--------------------------------------------------------------------------------------------------------
+             ------
+ 479          Imprime el ticket en codigo QR
+ 480          ----------------------------------------------------------------------------------------------------------
+             ------*/
+ 481          void Print_datos_cliente_QR()
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 9   
+
+ 482          {
+ 483   1        unsigned char buffer[50];
+ 484   1        /*------------------------------------------------imprime el nombre del parqueadero*/ 
+ 485   1          Inicializa_Print();                         /*cmd de inicio de impresora*/
+ 486   1          Posicion_tabulacion(0x35,0);                /*posiciona el carro*/
+ 487   1          Move_car();                                 /*establece las unidades de movimiento H y V*/
+ 488   1          Justify('C');                               /*texto justificado al centro*/
+ 489   1          Bold(01);                                   /*pone el texto en negrilla*/
+ 490   1          Tama_letra(0x01);                           /*tamaño del caracter*/           
+ 491   1          Espcs_ent_chr(01);                          /*espacio entre caracteres*/
+ 492   1          Alimentar_paper(06);                        /*alimenta el papel y se posiciona para imprimir*/
+ 493   1          LeerMemoria(EE_CLIENTE,buffer); 
+ 494   1          printf("%s",buffer);                        /*imprimo el nombre de la  concepcion*/
+ 495   1      /*------------------------------------------------*/  
+ 496   1          LeerMemoria(EE_NIT,buffer); 
+ 497   1          Bold(00);                                   /*pone el texto sin negrilla*/
+ 498   1          Tama_letra(0x00);                           /*tamaño del caracter*/
+ 499   1          Espcs_ent_chr(0);                           /*espacio entre caracteres*/
+ 500   1          printf("NIT: %s",buffer);                   /*imprimo numero de nit*/
+ 501   1      /*------------------------------------------------*/      
+ 502   1          Justify('C');                               /*texto justificado al centro*/
+ 503   1          LeerMemoria(EE_PARQUEADERO,buffer); 
+ 504   1          printf("%s",buffer);                        /*imprimo el nombre del parqueadero*/
+ 505   1      /*------------------------------------------------*/  
+ 506   1          Justify('C');                               /*texto justificado al centro*/
+ 507   1          LeerMemoria(EE_ADDRES ,buffer); 
+ 508   1          printf("%s",buffer);                        /*imprimo la direcccion y telefono del parqueadero*/
+ 509   1          Interlineado(10); 
+ 510   1      /*------------------se crea el codigo QR-----------------------------------------------------------*/   
+ 511   1          Justify('C');                               /*texto justificado al centro*/
+ 512   1          Print_cod_QR();   
+ 513   1      /*--------------------------------------------------------------------------------------------------*/
+ 514   1          
+ 515   1          print_ticket();                             /*Imprimo No de ticket, fecha, tipo de vehiculo, placa*/
+ 516   1          Print_msj_cod_barras();                     /*imprime los msj informativos del ticket*/
+ 517   1          printf("\n\n\n\n\n\n"); 
+ 518   1          FullCut();
+ 519   1      }
+ 520          /*------------------------------------------------
+ 521          Cmd que imprime el ticket del codigo de barras
+ 522          ------------------------------------------------*/
+ 523          void Print_datos_cliente()
+ 524          {
+ 525   1        unsigned char buffer[50];
+ 526   1        
+ 527   1      /*------------------------------------------------    codigo de barras al inicio*/
+ 528   1          Interlineado(2);  
+ 529   1          Alimenta_nline(1);
+ 530   1          Print_cod_barras();                           /*Imprimo el codigo de barras con el numero del recibo */
+ 531   1      /*------------------------------------------------imprime el nombre del parqueadero*/ 
+ 532   1          Inicializa_Print();                         /*cmd de inicio de impresora*/
+ 533   1          Posicion_tabulacion(0x35,0);                /*posiciona el carro*/
+ 534   1          Move_car();                                 /*establece las unidades de movimiento H y V*/
+ 535   1          Justify('C');                               /*texto justificado al centro*/
+ 536   1          Bold(01);                                   /*pone el texto en negrilla*/
+ 537   1          Tama_letra(0x01);                           /*tamaño del caracter*/           
+ 538   1          Espcs_ent_chr(01);                          /*espacio entre caracteres*/
+ 539   1          Alimentar_paper(06);                        /*alimenta el papel y se posiciona para imprimir*/
+ 540   1          LeerMemoria(EE_CLIENTE,buffer); 
+ 541   1          printf("%s",buffer);                        /*imprimo el nombre de la  concepcion*/
+ 542   1      /*------------------------------------------------*/  
+ 543   1          LeerMemoria(EE_NIT,buffer); 
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 10  
+
+ 544   1          Bold(00);                                   /*pone el texto sin negrilla*/
+ 545   1          Tama_letra(0x00);                           /*tamaño del caracter*/
+ 546   1          Espcs_ent_chr(0);                           /*espacio entre caracteres*/
+ 547   1          printf("NIT: %s",buffer);                   /*imprimo numero de nit*/
+ 548   1      /*------------------------------------------------*/      
+ 549   1          Justify('C');                               /*texto justificado al centro*/
+ 550   1          LeerMemoria(EE_PARQUEADERO,buffer); 
+ 551   1          printf("%s",buffer);                        /*imprimo el nombre del parqueadero*/
+ 552   1      /*------------------------------------------------*/  
+ 553   1          Justify('C');                               /*texto justificado al centro*/
+ 554   1          LeerMemoria(EE_ADDRES ,buffer); 
+ 555   1          printf("%s",buffer);                        /*imprimo la direcccion y telefono del parqueadero*/
+ 556   1          Interlineado(10);   
+ 557   1          print_ticket();                             /*Imprimo No de ticket, fecha, tipo de vehiculo, placa*/
+ 558   1          Print_msj_cod_barras();                     /*imprime los msj informativos del ticket*/
+ 559   1          Print_cod_barras();                           /*Imprimo el codigo de barras con el numero del recibo */
+ 560   1          printf("\n\n\n\n"); 
+ 561   1          FullCut();
+ 562   1      }
+ 563          /*  ------------------------------------------------------------------------
+ 564          Con el numero de serie imprime el codigo de barras
+ 565          ----------------------------------------------------------------------------*/
+ 566          void Print_cod_barras()
+ 567          {
+ 568   1        unsigned char serie[10];
+ 569   1        Inicializa_Print();                         /*cmd de inicio de impresora*/
+ 570   1        Justify('C');                               /*texto justificado al centro*/
+ 571   1        height_code_bar(0x65);                        /*altura del codigo de barras*/
+ 572   1        position_Hri('1');                            /*posicion donde imprime el codigo de barras legible es abajo*/
+ 573   1        Fount_char_hri();                             /*Tipo de fuente*/
+ 574   1        Tipo_fuente('1');   
+ 575   1        serie_ascii_siceros_l(serie);
+ 576   1        Prin_cod_barra(CODE39,serie);
+ 577   1      
+ 578   1      }
+ 579          /*-------------------------------------------------------------------------------
+ 580          Imprime msj informativos del ticket
+ 581          --------------------------------------------------------------------------------*/
+ 582          void Print_msj_cod_barras()
+ 583          {
+ 584   1        unsigned char msj_print[62];
+ 585   1        Tipo_fuente('1');                             /*tipo de fuente 1 letra pequeña*/
+ 586   1        Interlineado(10);                             /*Separacion entre renglon*/
+ 587   1        Justify('L');                                 /*justificado a la izquierda*/
+ 588   1        Bold(0);                                      /*sin negrita*/
+ 589   1        LeerMemoria(EE_MSJ1,msj_print);
+ 590   1        printf(" %s",msj_print);  
+ 591   1        
+ 592   1        LeerMemoria(EE_MSJ2,msj_print);
+ 593   1        printf(" %s",msj_print);  
+ 594   1        
+ 595   1        LeerMemoria(EE_MSJ3,msj_print);
+ 596   1        printf(" %s",msj_print);  
+ 597   1        
+ 598   1        LeerMemoria(EE_MSJ4,msj_print);
+ 599   1        printf(" %s",msj_print);  
+ 600   1        
+ 601   1        LeerMemoria(EE_MSJ5,msj_print);
+ 602   1        printf(" %s",msj_print);  
+ 603   1        
+ 604   1        LeerMemoria(EE_MSJ6,msj_print);
+ 605   1        printf(" %s",msj_print);  
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 11  
+
+ 606   1        
+ 607   1        LeerMemoria(EE_MSJ7,msj_print);
+ 608   1        printf(" %s",msj_print);
+ 609   1        printf("pyp");  
+ 610   1      }
+ 611          /*-------------------------------------------------------------------------------
+ 612          Imprime No de ticket, fecha, tipo de vehiculo y placa 
+ 613          --------------------------------------------------------------------------------*/
+ 614          void print_ticket()
+ 615          {
+ 616   1        unsigned char bar[15];
+ 617   1        Interlineado(10);
+ 618   1      /*---------------------Se imprime el numero del ticket------------------------------------------------- */
+ 619   1        
+ 620   1        Bold(01);                                                 /*pone el texto en negrilla*/
+ 621   1        Alimenta_nline(1);
+ 622   1        Justify('L'); 
+ 623   1        printf("   Tiquete No: ");  
+ 624   1        Bold(0);
+ 625   1        serie_ascii_siceros_l(bar);                               /*se imprime el numero de serie*/
+ 626   1        printf("%s\n",bar); 
+ 627   1      /*---------------------Se imprime la fecha de entrada del vehiculo------------------------------------- */
+             -  
+ 628   1        Block_read_clock_ascii(bar);                              /*Lee la fecha en ascci*/   
+ 629   1        Justify('L');
+ 630   1        Bold(1);
+ 631   1        printf("   Fecha:      ");                                      
+ 632   1        Bold(0);
+ 633   1        printf("20"); 
+ 634   1        putchar(bar[0]);                                          /*Se imprime el año*/
+ 635   1        putchar(bar[1]);
+ 636   1        putchar('-');                                             /*se imprime el mes*/
+ 637   1        putchar(bar[2]);
+ 638   1        putchar(bar[3]);
+ 639   1        putchar('-');                                             /*se imprime el dia*/
+ 640   1        putchar(bar[4]);
+ 641   1        putchar(bar[5]);
+ 642   1        putchar(' ');
+ 643   1      /*---------------------Se imprime la hora de entrada del vehiculo-----------------------------------------
+             ---  */  
+ 644   1      
+ 645   1        putchar(bar[6]);                                          /*se imprime la hora*/
+ 646   1        putchar(bar[7]);
+ 647   1        putchar(':');                                             
+ 648   1        putchar(bar[8]);                                          /*se imprime minutos*/
+ 649   1        putchar(bar[9]);
+ 650   1      
+ 651   1        putchar('\n');
+ 652   1        
+ 653   1      /*---------------------Se imprime el tipo de vehiculo ----------------------------------------------------
+             ----  */  
+ 654   1        Bold(1);
+ 655   1        if(Tipo_Vehiculo==0)
+ 656   1        {
+ 657   2          printf("   Vehiculo:   Carro\n");
+ 658   2          
+ 659   2        }
+ 660   1        else
+ 661   1        {
+ 662   2          printf("   Vehiculo:   Moto\n");
+ 663   2        }
+ 664   1      /*---------------------Se imprime el numero de placa del vehiculo-----------------------------------------
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 12  
+
+             -------  */
+ 665   1        Tama_letra(0x01);                           /*tamaño del caracter*/           
+ 666   1        Espcs_ent_chr(01);                          /*espacio entre caracteres*/
+ 667   1        Bold(1);
+ 668   1        
+ 669   1        printf("   Placa:     ");
+ 670   1        printf("%s\n",placa); 
+ 671   1        
+ 672   1        Tama_letra(0x0);                            /*tamaño del caracter*/           
+ 673   1        Espcs_ent_chr(0);                         /*espacio entre caracteres*/
+ 674   1        Bold(0);
+ 675   1      }
+ 676          
+ 677          
+ 678          /*--------------------------------------------------------------------------------------------------------
+             ------------------
+ 679          procedimiento que mira el estado en que se encuentra la impresora
+ 680          SEQ_INICIO=00 se detecta lapresencia vehicular 
+ 681          SEQ_QUEST_PRINT=1 si fue  presionado el boton 
+ 682          paso_una_vez=variable que habilita el audio una sola vez el de entrada
+ 683          timer_paso_sensor2= cuenta un tiempo de espera a que los semsores sean liberados
+ 684          ----------------------------------------------------------------------------------------------------------
+             ------------------*/
+ 685          
+ 686          void Genera_ticket(void)
+ 687          {
+ 688   1        static unsigned char paso_una_vez=0;
+ 689   1        static unsigned char timer_paso_sensor2=0;
+ 690   1        switch (g_cEstadoImpresion)
+ 691   1        {
+ 692   2          case SEQ_INICIO:
+ 693   2          
+ 694   2            
+ 695   2          if (ValTimeOutCom==1)                                                                 /*tiempo de espera */
+ 696   2          {
+ 697   3            if (ValidaSensoresPaso()!=0)                                                        /*pregunto q alla presencia vehicular*/
+ 698   3            {
+ 699   4              Debug_txt_Tibbo((unsigned char *) "Vehiculo en el loop\r\n\r\n");                 /* se encuentra un sensor ac
+             -tivo*/
+ 700   4              PantallaLCD(BIENVENIDO);
+ 701   4              if(paso_una_vez==0)
+ 702   4              {
+ 703   5              
+ 704   5              send_portERR(AUDIO_IN);                                                           /*habilito el audio de entrada*/
+ 705   5              paso_una_vez=1;
+ 706   5              }                           
+ 707   4              sel_Pulsa();                                                                      /*se pregunta por el pulsador*/
+ 708   4              
+ 709   4              if (DataIn==0)                                                                    /*si es precionado */     
+ 710   4              {
+ 711   5                  
+ 712   5               Debug_txt_Tibbo((unsigned char *) "Pulsador Activo\r\n");
+ 713   5                                                                                                /*envia cmd a monitor de vehiculo de Entrada*/
+ 714   5               g_cEstadoImpresion=SEQ_QUEST_PRINT;                                              /*vamos al siguiente paso a con validar el 
+             -cmd*/    
+ 715   5              }
+ 716   4              else
+ 717   4              {
+ 718   5                Debug_txt_Tibbo((unsigned char *) "Pulsador No Activo\r\n");
+ 719   5                ValTimeOutCom=TIME_PULSADOR;
+ 720   5                buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la tram
+             -a*/
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 13  
+
+ 721   5                g_cEstadoComSoft=ESPERA_RX;   
+ 722   5                g_cEstadoImpresion=SEQ_INICIO;                                                    /*volvemos a preguntar  */  
+ 723   5                    
+ 724   5              }
+ 725   4              
+ 726   4            
+ 727   4            }
+ 728   3            else
+ 729   3              {
+ 730   4              Debug_txt_Tibbo((unsigned char *) "Vehiculo no en el loop\r\n\r\n");              /* no hay vehiculo en el lo
+             -op*/
+ 731   4              paso_una_vez=0;                                               
+ 732   4              ValTimeOutCom=TIME_PULSADOR;
+ 733   4              buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la trama
+             -*/
+ 734   4              g_cEstadoComSoft=ESPERA_RX;   
+ 735   4              g_cEstadoImpresion=SEQ_INICIO;                                                    /*volvemos a preguntar  */  
+ 736   4                    
+ 737   4              }
+ 738   3          }
+ 739   2          break;
+ 740   2      /*--------------------------------------------------------------------------------------------------------
+             ----------------------
+ 741   2      SEQ_QUEST_PRINT=01 el boton fue presionado, envio cmd a monitor   
+ 742   2      ----------------------------------------------------------------------------------------------------------
+             ----------------------*/
+ 743   2          case SEQ_QUEST_PRINT:
+ 744   2              
+ 745   2            Cmd_Monitor('E');                                                               /*trama monitor*/
+ 746   2            clear_buffer();                                                                 /*limpio el buffer del pto serie*/
+ 747   2            Status(04);                                                                     /*pregunta a  la impresora si tiene papel*/
+ 748   2            send_portERR(BIENVENIDO);                                                       /*puerto paralalelo*/
+ 749   2              
+ 750   2          
+ 751   2            g_cEstadoImpresion=SEQ_RTA_QUEST;
+ 752   2            ValTimeOutCom=TIME_RX ;                                                         /*tiempo de espera de respuesta de la impresora*/ 
+ 753   2            buffer_ready=0;                                                                 /* buffer del pto serie (0) inicia a esperar la trama*/
+ 754   2            g_cEstadoComSoft=ESPERA_RX;   
+ 755   2            break;
+ 756   2      /*--------------------------------------------------------------------------------------------------------
+             ----------------------
+ 757   2      SEQ_RTA_QUEST=02 se pregunta si hay papel en la impresora
+ 758   2          el pto serie debe responder
+ 759   2          00= no hay datas
+ 760   2          01= si tiene papel la printer
+ 761   2          02= no, tiene papel         
+ 762   2      ----------------------------------------------------------------------------------------------------------
+             ----------------------*/   
+ 763   2          case SEQ_RTA_QUEST:
+ 764   2          
+ 765   2          if ((ValTimeOutCom==1)||(buffer_ready!=0))
+ 766   2            {
+ 767   3              
+ 768   3              DebugBufferMF(Buffer_Rta_Lintech,1,1);    
+ 769   3              
+ 770   3              if (buffer_ready==1)
+ 771   3              {
+ 772   4                buffer_ready=0;
+ 773   4                Debug_txt_Tibbo((unsigned char *) "Impresora con papel \r\n");              /*la respuesta es desconocida*/
+ 774   4                ValTimeOutCom=TIME_PLACA;
+ 775   4                g_cEstadoImpresion=SEQ_PRINT  ;   
+ 776   4              }
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 14  
+
+ 777   3              else if (buffer_ready==2)
+ 778   3              {
+ 779   4                  
+ 780   4                 Debug_txt_Tibbo((unsigned char *) "Impresora no tiene papel \r\n");        /*la respuesta es desconocid
+             -a*/
+ 781   4                 ValTimeOutCom=TIME_CARD;
+ 782   4                 buffer_ready=0;                                                                    /* buffer del pto serie (0) inicia a esperar la tra
+             -ma*/
+ 783   4                 g_cEstadoComSoft=ESPERA_RX;    
+ 784   4                 g_cEstadoImpresion=SEQ_INICIO;
+ 785   4                    
+ 786   4              }
+ 787   3              
+ 788   3              else if (buffer_ready==3)
+ 789   3              {
+ 790   4                 Debug_txt_Tibbo((unsigned char *) "Nivel bajo de papel \r\n");       /*la respuesta es desconocida*/
+ 791   4                 ValTimeOutCom=TIME_PLACA;
+ 792   4                 buffer_ready=0;                                                                    /* buffer del pto serie (0) inicia a esperar la tra
+             -ma*/
+ 793   4                 g_cEstadoComSoft=ESPERA_RX;    
+ 794   4                 g_cEstadoImpresion=SEQ_PRINT;
+ 795   4                    
+ 796   4              }
+ 797   3              else 
+ 798   3              {
+ 799   4                  Debug_txt_Tibbo((unsigned char *) "Impresora no responde \r\n");          /*la respuesta es desconocida*
+             -/
+ 800   4                 ValTimeOutCom=TIME_CARD;
+ 801   4                 buffer_ready=0;                                                                    /* buffer del pto serie (0) inicia a esperar la tra
+             -ma*/
+ 802   4                 g_cEstadoComSoft=ESPERA_RX;    
+ 803   4                 g_cEstadoImpresion=SEQ_INICIO;
+ 804   4                  
+ 805   4              }
+ 806   3            }
+ 807   2              
+ 808   2            break;
+ 809   2      /*--------------------------------------------------------------------------------------------------------
+             ----------------------
+ 810   2      SEQ_PRINT =03 se imprime la factura
+ 811   2      y se envia una trama al pto paralelo para que el principal envie trama a access 
+ 812   2      ademas incrementa el numero de consecutivo  
+ 813   2      placa_ready=1 indica que tiene la placa =0 indica que no le ha llegado la placa     
+ 814   2      ----------------------------------------------------------------------------------------------------------
+             ----------------------*/   
+ 815   2            case SEQ_PRINT:
+ 816   2              if((ValTimeOutCom==1)|| (placa_ready==1))                                         /*tiempo de espera */
+ 817   2            {
+ 818   3              Trama_pto_paralelo_printer('a');                                                  /*se envia trama al pto paralelo para comunic
+             -ar access*/
+ 819   3              
+ 820   3              send_portERR(AUDIO_ENTER);
+ 821   3              PantallaLCD(INGRESO);       
+ 822   3              Debug_txt_Tibbo((unsigned char *) "Imprimiendo \r\n");                            /*la respuesta es desconocida*/
+ 823   3              if(QR_BARRAS!=0)                                                                  /* se pregunta si imprime codigo de barras o Qr*/
+ 824   3              {
+ 825   4              Print_datos_cliente_QR();                                                         /*imprime codigo QR*/ 
+ 826   4              }
+ 827   3              else
+ 828   3              {
+ 829   4              Print_datos_cliente();                                                            /*imprime los datos del cliente codigo de barras*/
+ 830   4              }
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 15  
+
+ 831   3              
+ 832   3              ValTimeOutCom=TIME_PULSADOR;
+ 833   3              buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la trama
+             -*/
+ 834   3              g_cEstadoComSoft=ESPERA_RX;   
+ 835   3              g_cEstadoImpresion=SEQ_RELEASE;
+ 836   3              lock=1; 
+ 837   3              Timer_wait=0;
+ 838   3              incremente_serie();                                                               /*se habre la barrera*/
+ 839   3              clear_placa();
+ 840   3            }
+ 841   2            break;
+ 842   2      /*--------------------------------------------------------------------------------------------------------
+             ------------------------
+ 843   2        espero el retorno de los sensores a esta normal 
+ 844   2      y reinicio el ciclo     
+ 845   2      ----------------------------------------------------------------------------------------------------------
+             ------------------------*/   
+ 846   2            case SEQ_RELEASE:
+ 847   2            if (ValTimeOutCom==1)                                                                 /*tiempo de espera */
+ 848   2            {
+ 849   3              timer_paso_sensor2++;
+ 850   3             if (timer_paso_sensor2 <= 18 )
+ 851   3             {
+ 852   4              sel_Pulsa();                                                                      /*se pregunta por el pulsador*/
+ 853   4              if (DataIn==1)                                                                    /*que este desactivado*/
+ 854   4              {
+ 855   5                
+ 856   5                sel_Sensor2();                                                                  /*valido que la barrera este abajo*/
+ 857   5                if ((DataIn==0)||(timer_paso_sensor2 >= 18 ))  
+ 858   5                {
+ 859   6                  timer_paso_sensor2=0;
+ 860   6                  paso_una_vez=0;
+ 861   6                  lock=0;                                                                           /*apago el rele de la salida */
+ 862   6                  ValTimeOutCom=TIME_PULSADOR;
+ 863   6                  buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la tra
+             -ma*/
+ 864   6                  g_cEstadoComSoft=ESPERA_RX;
+ 865   6                  g_cEstadoImpresion=SEQ_INICIO;
+ 866   6                }
+ 867   5                else 
+ 868   5                {
+ 869   6                  PantallaLCD(INGRESO); 
+ 870   6                  lock=0;
+ 871   6                  ValTimeOutCom=TIME_PULSADOR;
+ 872   6                  buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la tra
+             -ma*/
+ 873   6                  g_cEstadoComSoft=ESPERA_RX;
+ 874   6                  g_cEstadoImpresion=SEQ_RELEASE;
+ 875   6                }
+ 876   5              }
+ 877   4              else
+ 878   4              {
+ 879   5                  
+ 880   5                ValTimeOutCom=TIME_PULSADOR;
+ 881   5                buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la tram
+             -a*/
+ 882   5                g_cEstadoComSoft=ESPERA_RX;
+ 883   5                g_cEstadoImpresion=SEQ_RELEASE;
+ 884   5              }
+ 885   4             }else
+ 886   3             {
+C51 COMPILER V9.59.0.0   PRINTER_NANO                                                      08/16/2019 11:13:03 PAGE 16  
+
+ 887   4              timer_paso_sensor2=0;
+ 888   4              paso_una_vez=0;
+ 889   4              lock=0;                                                                           /*apago el rele de la salida */
+ 890   4              ValTimeOutCom=TIME_PULSADOR;
+ 891   4              buffer_ready=0;                                                                   /* buffer del pto serie (0) inicia a esperar la trama
+             -*/
+ 892   4              g_cEstadoComSoft=ESPERA_RX;
+ 893   4              g_cEstadoImpresion=SEQ_INICIO;
+ 894   4             }
+ 895   3            }
+ 896   2          break;
+ 897   2              
+ 898   2                
+ 899   2            default:
+ 900   2            g_cEstadoImpresion=SEQ_INICIO;
+ 901   2          break;
+ 902   2      
+ 903   2        }
+ 904   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2828    ----
+   CONSTANT SIZE    =    405    ----
+   XDATA SIZE       =      2     304
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
