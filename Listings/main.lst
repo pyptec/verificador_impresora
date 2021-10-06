@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   MAIN                                                              01/20/2020 12:19:01 PAGE 1   
+C51 COMPILER V9.59.0.0   MAIN                                                              10/06/2021 15:40:47 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   52          be the exact desired operation (for example if the buffer is empty, this
   53          function hangs waiting for a character to be received).
   54          ------------------------------------------------------------------------------*/
-C51 COMPILER V9.59.0.0   MAIN                                                              01/20/2020 12:19:01 PAGE 2   
+C51 COMPILER V9.59.0.0   MAIN                                                              10/06/2021 15:40:47 PAGE 2   
 
   55          char _getkey (void)
   56          {
@@ -126,7 +126,7 @@ line level    source
  114          void variable_inicio()
  115          {
  116   1        
-C51 COMPILER V9.59.0.0   MAIN                                                              01/20/2020 12:19:01 PAGE 3   
+C51 COMPILER V9.59.0.0   MAIN                                                              10/06/2021 15:40:47 PAGE 3   
 
  117   1        ID_CLIENTE=rd_eeprom(0xa8,EE_ID_CLIENTE); 
  118   1        COD_PARK=rd_eeprom(0xa8,EE_ID_PARK);
@@ -136,99 +136,100 @@ line level    source
  122   1        USE_LPR=rd_eeprom(0xa8,EE_USE_LPR);
  123   1        COMPARACION_ACTIVA=rd_eeprom(0xa8,EE_CPRCN_ACTIVA);
  124   1        QR_BARRAS=rd_eeprom(0xa8,EE_QR_BARRAS);
- 125   1      }
- 126          /*------------------------------------------------------------------------------
- 127          Note that the two function above, _getkey and putchar, replace the library
- 128          functions of the same name.  These functions use the interrupt-driven serial
- 129          I/O routines in SIO.C.
- 130          ------------------------------------------------------------------------------*/
- 131          
+ 125   1        Raspberry = rd_eeprom(0xa8,EE_TIPO_PANTALLA);
+ 126   1      }
+ 127          /*------------------------------------------------------------------------------
+ 128          Note that the two function above, _getkey and putchar, replace the library
+ 129          functions of the same name.  These functions use the interrupt-driven serial
+ 130          I/O routines in SIO.C.
+ 131          ------------------------------------------------------------------------------*/
  132          
- 133          void main (void)
- 134          {
- 135   1        
- 136   1        static unsigned char buffer[40];
- 137   1        //unsigned char buffer_clock[]={0x02,0x30,0x30,0x30,0x30,0x30,0x35,0x30,0x30,0x30,0x30,0x03,0}; //dia,mes
+ 133          
+ 134          void main (void)
+ 135          {
+ 136   1        
+ 137   1        static unsigned char buffer[40];
+ 138   1        //unsigned char buffer_clock[]={0x02,0x30,0x30,0x30,0x30,0x30,0x35,0x30,0x30,0x30,0x30,0x03,0}; //dia,mes
              -,año,hora,minutos,SEGUNDOS,Dia de la semana
- 138   1        unsigned char buffer1[13];
- 139   1        
- 140   1        unsigned char Length_trama;
- 141   1      ini_timer();
- 142   1      on_Timer0_Interrup(); 
- 143   1      com_initialize ();                                                        /* initialize interrupt driven serial I/O */
- 144   1      com_baudrate ();                                                          /* setup for 9600 baud */
- 145   1      inicia_board();
- 146   1      EA = 1;                                                                   /* Enable Interrupts */
- 147   1      /*solo de pruebas */
- 148   1      time_bit();
- 149   1      //Delay_20us(33);
- 150   1      time_mbit();
- 151   1      tx_aux('a');  
- 152   1      
- 153   1      sel_Funcion();                                                            /*el pulsador funcion es precionadoa para entrar a programacio
+ 139   1        unsigned char buffer1[13];
+ 140   1        
+ 141   1        unsigned char Length_trama;
+ 142   1      ini_timer();
+ 143   1      on_Timer0_Interrup(); 
+ 144   1      com_initialize ();                                                        /* initialize interrupt driven serial I/O */
+ 145   1      com_baudrate ();                                                          /* setup for 9600 baud */
+ 146   1      inicia_board();
+ 147   1      EA = 1;                                                                   /* Enable Interrupts */
+ 148   1      /*solo de pruebas */
+ 149   1      time_bit();
+ 150   1      //Delay_20us(33);
+ 151   1      time_mbit();
+ 152   1      tx_aux('a');  
+ 153   1      
+ 154   1      sel_Funcion();                                                            /*el pulsador funcion es precionadoa para entrar a programacio
              -n */
- 154   1        if (DataIn==0)
- 155   1        {
- 156   2        menu();
- 157   2        }
- 158   1        variable_inicio();
- 159   1      
- 160   1        ValTimeOutCom=3;                                                        /*tiempo inicial para ver los sensores*/
- 161   1        
- 162   1        while (1)                                                               // Loop Principal               * 
- 163   1        {   
- 164   2          
- 165   2                                  
- 166   2            if (rx_ip==0)
- 167   2            {
- 168   3            
- 169   3              Length_trama=recibe_cmd_Monitor(buffer1);
- 170   3              Debug_Dividir_texto();  
- 171   3              Valida_Trama_Monitor(buffer1,Length_trama);
- 172   3              DebugBufferMF(buffer1,Length_trama,1);                                /*imprimo la trama recibida*/       
- 173   3              Debug_txt_Tibbo(placa); 
- 174   3              Debug_Dividir_texto();        
- 175   3            }
- 176   2              
-C51 COMPILER V9.59.0.0   MAIN                                                              01/20/2020 12:19:01 PAGE 4   
+ 155   1        if (DataIn==0)
+ 156   1        {
+ 157   2        menu();
+ 158   2        }
+ 159   1        variable_inicio();
+ 160   1      
+ 161   1        ValTimeOutCom=3;                                                        /*tiempo inicial para ver los sensores*/
+ 162   1        
+ 163   1        while (1)                                                               // Loop Principal               * 
+ 164   1        {   
+ 165   2          
+ 166   2                                  
+ 167   2            if (rx_ip==0)
+ 168   2            {
+ 169   3            
+ 170   3              Length_trama=recibe_cmd_Monitor(buffer1);
+ 171   3              Debug_Dividir_texto();  
+ 172   3              Valida_Trama_Monitor(buffer1,Length_trama);
+ 173   3              DebugBufferMF(buffer1,Length_trama,1);                                /*imprimo la trama recibida*/       
+ 174   3              Debug_txt_Tibbo(placa); 
+ 175   3              Debug_Dividir_texto();        
+ 176   3            }
+C51 COMPILER V9.59.0.0   MAIN                                                              10/06/2021 15:40:47 PAGE 4   
 
- 177   2              Lee_ticket();                                                   /*procedimiento de imprimir el ticket de entrada*/
- 178   2            
- 179   2              //Debug_txt_Tibbo((unsigned char *) "tiempo ");   /*msj longitud de la trama */
- 180   2              //Debug_chr_Tibbo(ValTimeOutCom); 
- 181   2              //Debug_txt_Tibbo((unsigned char *) " \r\n"); 
- 182   2            
- 183   2            if (busy==0)
- 184   2            {
- 185   3              
- 186   3              Length_trama=recibe_port(buffer);                                   /*recibe informacion del pto paralelo*/
- 187   3                                                
- 188   3              //Debug_Dividir_texto();                                              /*division del texto */
- 189   3              Debug_txt_Tibbo((unsigned char *) "Recibe trama pto:");         /*trama recibida pto paralelo */
- 190   3              DebugBufferMF(buffer,Length_trama,1);                               /*imprimo la trama recibida*/
- 191   3              Debug_txt_Tibbo((unsigned char *) " \r\n");
- 192   3              Debug_txt_Tibbo((unsigned char *) "longitud de la trama:");   /*msj longitud de la trama */
- 193   3              Debug_chr_Tibbo(Length_trama);                                      /*numero de caracteres recibidos*/
- 194   3              Debug_txt_Tibbo((unsigned char *) " \r\n"); 
- 195   3              //Debug_Dividir_texto();                                              /*divido el texto*/
- 196   3              
- 197   3              Valida_Trama_Pto(buffer,Length_trama);                              /*valido la informacion recibida */
- 198   3               
- 199   3            }
- 200   2            msj_lcd_informativo();
- 201   2        
+ 177   2              
+ 178   2              Lee_ticket();                                                   /*procedimiento de imprimir el ticket de entrada*/
+ 179   2            
+ 180   2              //Debug_txt_Tibbo((unsigned char *) "tiempo ");   /*msj longitud de la trama */
+ 181   2              //Debug_chr_Tibbo(ValTimeOutCom); 
+ 182   2              //Debug_txt_Tibbo((unsigned char *) " \r\n"); 
+ 183   2            
+ 184   2            if (busy==0)
+ 185   2            {
+ 186   3              
+ 187   3              Length_trama=recibe_port(buffer);                                   /*recibe informacion del pto paralelo*/
+ 188   3                                                
+ 189   3              //Debug_Dividir_texto();                                              /*division del texto */
+ 190   3              Debug_txt_Tibbo((unsigned char *) "Recibe trama pto:");         /*trama recibida pto paralelo */
+ 191   3              DebugBufferMF(buffer,Length_trama,1);                               /*imprimo la trama recibida*/
+ 192   3              Debug_txt_Tibbo((unsigned char *) " \r\n");
+ 193   3              Debug_txt_Tibbo((unsigned char *) "longitud de la trama:");   /*msj longitud de la trama */
+ 194   3              Debug_chr_Tibbo(Length_trama);                                      /*numero de caracteres recibidos*/
+ 195   3              Debug_txt_Tibbo((unsigned char *) " \r\n"); 
+ 196   3              //Debug_Dividir_texto();                                              /*divido el texto*/
+ 197   3              
+ 198   3              Valida_Trama_Pto(buffer,Length_trama);                              /*valido la informacion recibida */
+ 199   3               
+ 200   3            }
+ 201   2            msj_lcd_informativo();
  202   2        
- 203   2        }
- 204   1      
- 205   1      }
- 206          
+ 203   2        
+ 204   2        }
+ 205   1      
+ 206   1      }
  207          
+ 208          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    479    ----
+   CODE SIZE        =    493    ----
    CONSTANT SIZE    =     44    ----
-   XDATA SIZE       =     71      17
+   XDATA SIZE       =     72      17
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =    138    ----

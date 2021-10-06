@@ -122,6 +122,7 @@ void variable_inicio()
 	USE_LPR=rd_eeprom(0xa8,EE_USE_LPR);
 	COMPARACION_ACTIVA=rd_eeprom(0xa8,EE_CPRCN_ACTIVA);
 	QR_BARRAS=rd_eeprom(0xa8,EE_QR_BARRAS);
+	Raspberry = rd_eeprom(0xa8,EE_TIPO_PANTALLA);
 }
 /*------------------------------------------------------------------------------
 Note that the two function above, _getkey and putchar, replace the library

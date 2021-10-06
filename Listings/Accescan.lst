@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   ACCESCAN                                                          01/20/2020 12:19:02 PAGE 1   
+C51 COMPILER V9.59.0.0   ACCESCAN                                                          10/06/2021 15:40:49 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE ACCESCAN
@@ -62,7 +62,7 @@ line level    source
   51          #define ON_LINE                 0xAA
   52          
   53          /*mensajes de pantalla*/
-C51 COMPILER V9.59.0.0   ACCESCAN                                                          01/20/2020 12:19:02 PAGE 2   
+C51 COMPILER V9.59.0.0   ACCESCAN                                                          10/06/2021 15:40:49 PAGE 2   
 
   54          #define BIENVENIDO              0XFE
   55          #define SIN_PAGO                0XE7
@@ -126,7 +126,7 @@ line level    source
  104   2            
  105   2            if (Timer_wait>=20)                                                                                               /* se envia el msj fuera de linea*/
  106   2            { 
-C51 COMPILER V9.59.0.0   ACCESCAN                                                          01/20/2020 12:19:02 PAGE 3   
+C51 COMPILER V9.59.0.0   ACCESCAN                                                          10/06/2021 15:40:49 PAGE 3   
 
  107   3              Timer_wait=0;                                                                                                   /*se inicia el timer*/
  108   3              lock=0;
@@ -190,7 +190,7 @@ line level    source
              --------*/
  158   3                
  159   3                    while(!ValidaSensoresPaso());
-C51 COMPILER V9.59.0.0   ACCESCAN                                                          01/20/2020 12:19:02 PAGE 4   
+C51 COMPILER V9.59.0.0   ACCESCAN                                                          10/06/2021 15:40:49 PAGE 4   
 
  160   3                      
  161   3                    Cmd_LPR_Salida_wiegand(buff);

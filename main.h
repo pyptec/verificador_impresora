@@ -91,6 +91,7 @@ definiciones de los estados del verificador o expedidor
  unsigned char 	QR_BARRAS;
  unsigned char buffer_ready=0;
  unsigned char placa[]={0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0};
+ unsigned char 	Raspberry;																		/*variable que define los msj por lcd (0) o rasberry (1)*/
 
  /* definicion de variables globales de configuracion del parqueadero*/
 
@@ -112,6 +113,7 @@ bit placa_ready=0;
 #define EE_SIN_COBRO					0x0006
 #define EE_DEBUG							0x0008
 #define EE_USE_LPR						0x000A
+#define EE_TIPO_PANTALLA			0X000B
 #define EE_CPRCN_ACTIVA				0x000C
 #define EE_QR_BARRAS					0x000E
 

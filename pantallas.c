@@ -5,6 +5,7 @@
 sbit sel_com = P0^7;				//Micro switch	
 /* varibles externas*/
 extern  unsigned char Tipo_Vehiculo;	
+extern unsigned char 	Raspberry;
 
 /*funciones externas*/
 extern char putchar (char c);
@@ -109,6 +110,33 @@ void Reloj_Pantalla_Lcd()
 					REN = 1;																																				/*habilita recepcion de datos*/
 					sel_com=1;																																			/*switch pto serie a verificador o expedidor */
 }
+void Raspberry_data (unsigned char *msjpantalla)
+{
+	
+	unsigned char i;
+	unsigned char lenth_cadena;
+	unsigned char d;
+	
+	
+	lenth_cadena=strlen(msjpantalla);
+	
+	for (i=0; i < lenth_cadena ; i++)
+	{
+			
+		for (d=0; d<100; d++)
+   {
+	 }
+		d=putchar(*(msjpantalla + i));
+
+	}
+	
+		
+		for (d=0; d<100; d++)
+   {
+    /*** DO NOTHING ***/
+    }
+	
+}
 /*------------------------------------------------------------------------------
 Rutina de msj de pantalla
 0xaa,0x80,0x18 cmd de inicio lcd
@@ -119,7 +147,7 @@ Rutina de msj de pantalla
 void PantallaLCD(unsigned char cod_msg)
 {
 unsigned char bar[15];
-unsigned char datos[25];
+unsigned char datos[40];
 unsigned char Ini_LCD_Line_one   []={0xaa,0x80,CAN,SOH,STX,0x00} ;
 unsigned char Ini_LCD_Line_two   []={0xaa,0x80,0x18,0x02,0x02,0x00} ;
 
@@ -129,8 +157,8 @@ unsigned char num_chr;
 	
 		sel_com=0;
 	
-		//if (Raspberry==0)
-		//{
+		if (Raspberry==0)
+		{
 			LCD_txt (Ini_LCD_Line_one,0);
 			
 			switch (cod_msg)
@@ -247,6 +275,24 @@ unsigned char num_chr;
 					break;
 	}
 				sel_com=1;	
+	}
+		else
+		{
+			sel_com=0;   
+         switch (cod_msg)
+         {
+					 case BIENVENIDO:
+						strcpy(datos,"a;03;ACERQUE SU TICKET\n\0");
+						Raspberry_data (datos);
+            break;
+					 	case GRACIAS:
+						strcpy(datos,"a;03;GRACIAS \n\0");
+						Raspberry_data (datos);
+            break;
+						
+				 }
+			 sel_com=1; 	 
+		}
 }
 void PantallaLCD_LINEA_2(unsigned char cod_msg, unsigned char *buffer)
 {
