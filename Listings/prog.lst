@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 1   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PROG
@@ -62,7 +62,7 @@ line level    source
   52          
   53          char comandos[NUMCOMMAND][LONGSIZE]=
   54          {
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 2   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 2   
 
   55            "0",          //ID_CLIENTEValor del punto cero.
   56            "1",       //COD_PARKTiempo de recolecion entre muestra
@@ -126,7 +126,7 @@ line level    source
  114          
  115          
  116          /*------------------------------------------------------------------------------
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 3   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 3   
 
  117          Rutina que busca el \
  118          ------------------------------------------------------------------------------*/
@@ -190,7 +190,7 @@ line level    source
  176   2        } while(i != '\r');
  177   1          
  178   1            
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 4   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 4   
 
  179   1               
  180   1      } 
@@ -254,7 +254,7 @@ line level    source
  234   1        dataee=rd_eeprom(0xa8,EE_TIEMPO_GRACIA);                                          /*se lee el id_cliente actual */
  235   1        sprintf(buffer,"%d",dataee);                                                  /*se convierte  un entero a un string*/
  236   1        
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 5   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 5   
 
  237   1        printf("\r\n\n ACTUAL TIEMPO_GRACIA=%s\r\n\n",buffer);                            /*se muestra el id_cliente actual en 
              -pantalla*/
@@ -318,7 +318,7 @@ line level    source
  292   2        }
  293   1        
  294   1      }
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 6   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 6   
 
  295          /*------------------------------------------------------------------------------
  296          
@@ -382,7 +382,7 @@ line level    source
  351   1        printf("\r\n\n DIGITE EL NUEVO ESTADO DE USE_LPR=");                                  /*digite el nuevo id_cliente*/
  352   1        IngresaDato(buffer,0);                                                        /*trae el dato digitado*/
  353   1        dataee=atoi(buffer);                                                          /*lo convierto a un dato hex*/
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 7   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 7   
 
  354   1        wr_eeprom(0xa8,EE_USE_LPR,dataee);                                          /*grabo el dato en la eeprom*/
  355   1        
@@ -446,7 +446,7 @@ line level    source
  410          
  411          ------------------------------------------------------------------------------*/
  412          void Prog_Comparacion_Activa()
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 8   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 8   
 
  413          {
  414   1        unsigned char buffer[10];
@@ -510,7 +510,7 @@ line level    source
  467   1        dataee=atoi(buffer);                                                          /*lo convierto a un dato hex*/
  468   1        wr_eeprom(0xa8,EE_QR_BARRAS,dataee);                                          /*grabo el dato en la eeprom*/
  469   1        
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 9   
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 9   
 
  470   1        dataee=rd_eeprom(0xa8,EE_QR_BARRAS);                                        /*leo el dato grabado*/
  471   1        sprintf(buffer,"%d",dataee);  
@@ -574,7 +574,7 @@ line level    source
  528   1        LeerMemoria(EE_ADDRES,buffer);  
  529   1        printf("\r\n\n Direccion: %s\r\n\n",buffer);    
  530   1      } 
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 10  
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 10  
 
  531          void Prog_Msj1()
  532          {
@@ -638,7 +638,7 @@ line level    source
  590   1        unsigned char buffer[62];
  591   1        
  592   1        printf("\r\n\n Digite el msj6 del establecimiento ");                                 /*digite el nuevo id_cliente*/
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 11  
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 11  
 
  593   1        IngresaDato(buffer,0);                                                        /*trae el dato digitado*/
  594   1        
@@ -702,7 +702,7 @@ line level    source
  652   1      
  653   1      
  654   1      
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 12  
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 12  
 
  655   1        
  656   1        printf("\r\n\nSistema de Programacion Verificador\r\n\r\n");
@@ -766,7 +766,7 @@ line level    source
  714   2            {
  715   3               switch(ListaComandos(cmd))
  716   3               {
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 13  
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 13  
 
  717   4                  case 0:                     /*Se programa la identificacion del cliente*/
  718   4                    prog_id_cliente();
@@ -830,7 +830,7 @@ line level    source
  776   4                    
  777   4                  Prog_Msj1();
  778   4                    
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 14  
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 14  
 
  779   4                     break;
  780   4                  case 14:                    /*Numero del Nit*/
@@ -894,7 +894,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   4213    ----
    CONSTANT SIZE    =   3380    ----
    XDATA SIZE       =     95     790
-C51 COMPILER V9.59.0.0   PROG                                                              10/06/2021 15:40:49 PAGE 15  
+C51 COMPILER V9.59.0.0   PROG                                                              10/07/2021 16:30:35 PAGE 15  
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

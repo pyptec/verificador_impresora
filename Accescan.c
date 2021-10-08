@@ -52,9 +52,12 @@ sbit led_err_imp = P0^2;			//Error
 
 /*mensajes de pantalla*/
 #define BIENVENIDO							0XFE
-#define SIN_PAGO								0XE7
+//#define SIN_PAGO								0XE7
 #define LECTURA_DE_TARJETAS			0xB0
 #define GRACIAS									0XFF
+
+#define	PRMR_DIREJASE_A_CAJA		0XA1
+#define	SIN_PAGO								90
 
 #define SEQ_REINTENTO					0X05
 #define 	TIME_PLACA				55
@@ -138,7 +141,8 @@ void Valida_Trama_Pto(unsigned char *buffer, unsigned char length_trama)
 			
 			
 		}
-		else if ((length_trama==1)&&(*buffer==0xA1))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+								/*--------------CMD 0xA1 msj sin pago-----------------------------*/
+		else if ((length_trama==1)&&(*buffer==PRMR_DIREJASE_A_CAJA))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
 		{
 				 PantallaLCD(SIN_PAGO);
 		}

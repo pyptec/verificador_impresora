@@ -145,7 +145,7 @@ lee el dato en el pto serial del codigo qr
 					Debug_txt_Tibbo((unsigned char *) "trama del lector datalogic cod QR");							/*la respuesta es desconocida*/
 					Debug_txt_Tibbo(rbuf);																															/*imprimo la trama recibida*/
 					Debug_txt_Tibbo((unsigned char *) "\r\n");
-																											
+					ValTimeOutCom=TIME_CARD;																						
 					g_cEstadoImpresion=SEQ_SEND_SOFT_QR	;		
 																																															/* buffer del pto serie (0) inicia a esperar la trama*/
 				 
@@ -164,6 +164,7 @@ lee el dato en el pto serial del codigo qr
 					g_cEstadoImpresion=SEQ_LEECODIGO;	
 					break;
 					}
+					/*COD DE BARRAS*/	
 					Debug_txt_Tibbo((unsigned char *) "trama del lector datalogic cod barras");						/*la respuesta es desconocida*/
 					Debug_txt_Tibbo(Ticket);																																/*imprimo la trama recibida*/
 					Debug_txt_Tibbo((unsigned char *) "\r\n");
@@ -209,6 +210,9 @@ lee el dato en el pto serial del codigo qr
 		case  SEQ_SEND_SOFT_QR:
 			/*es un codigo QR*/
 				ES = 0;															/*inactivo pto serie y analizo el dato*/
+			if (ValTimeOutCom==1)
+			{
+		
 				Debug_txt_Tibbo((unsigned char *) "cod QR r\n");
 				/*codigo qr*/
 				buffer_ready=0;											/*limpio el testigo de recepcion de datos serie*/
@@ -265,6 +269,7 @@ lee el dato en el pto serial del codigo qr
 					g_cEstadoImpresion=SEQ_LEECODIGO;		
 				
 				}
+			}
 					break;
 		case SEQ_CMNCCN_PTO:
 			if (ValTimeOutCom==1)

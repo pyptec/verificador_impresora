@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   52          
   53          /*tiempo de delay entre funciones*/
   54          #define TIME_CARD       5     //50
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 2   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 2   
 
   55          #define TIME_EJECT        5     //60
   56          #define RET_MINIMO        3
@@ -126,7 +126,7 @@ line level    source
  114   1        {
  115   2          
  116   2        RI = 0;
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 3   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 3   
 
  117   2        cDatoRx=SBUF;
  118   2        if (((r_in - r_out) & ~(RBUF_SIZE-1)) == 0)
@@ -190,7 +190,7 @@ line level    source
  176   2      //        }
  177   2      //        else if (Buffer_Rta_Lintech[0]==RS)
  178   2      //        {
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 4   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 4   
 
  179   2      //          buffer_ready=3;                               /*nivel de papel bajo */  
  180   2      //          g_cEstadoComSoft=ESPERA_RX;
@@ -254,7 +254,7 @@ line level    source
  238   2      //            for (k=0; k<g_cContByteRx-1; k++)
  239   2        //          {
  240   2      //              bcc=Buffer_Rta_Lintech[k]^bcc;
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 5   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 5   
 
  241   2      //            }
  242   2      //              if (bcc==Buffer_Rta_Lintech[g_cContByteRx-1]) 
@@ -318,7 +318,7 @@ line level    source
  300          void com_initialize (void)
  301          {
  302   1      /*------------------------------------------------
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 6   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 6   
 
  303   1      Setup TIMER1 to generate the proper baud rate.
  304   1      ------------------------------------------------*/
@@ -382,7 +382,7 @@ line level    source
  362          ------------------------------------------------------------------------------*/
  363          #pragma disable
  364          
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 7   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 7   
 
  365          char com_putchar (
  366            unsigned char c)
@@ -446,7 +446,7 @@ line level    source
  424   1      r_in = 0;
  425   1      r_out = 0;
  426   1      RI = 0;             /* clear receiver interrupt */
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 8   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 8   
 
  427   1      TI = 0;             /* clear transmit interrupt */
  428   1      }
@@ -510,7 +510,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      5    ----
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.59.0.0   UART                                                              10/06/2021 15:40:49 PAGE 9   
+C51 COMPILER V9.59.0.0   UART                                                              10/07/2021 16:30:36 PAGE 9   
 
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.

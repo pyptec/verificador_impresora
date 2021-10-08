@@ -65,7 +65,7 @@ unsigned char recibe_port(unsigned char *buffer_port)
 
 	unsigned int count;
 	unsigned char time_out,num_data;
-	unsigned int T_ANCHO=500;
+	unsigned int T_ANCHO=152;
 	
 		
 		off_Timer0_Interrup();				

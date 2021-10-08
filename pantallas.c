@@ -21,7 +21,7 @@ extern void clear_buffer();
 #define TARJETA_SIN_FORMATO	    0xDF
 #define ERROR_COD_PARK					0XE5
 #define SIN_INGRESO							0XE6
-#define SIN_PAGO								0XE7
+#define SIN_PAGO								90
 #define EXCEDE_GRACIA						0XE8
 #define FUERA_DE_LINEA					0XB6
 #define LECTURA_DE_TARJETAS			0xB0
@@ -286,9 +286,16 @@ unsigned char num_chr;
 						Raspberry_data (datos);
             break;
 					 	case GRACIAS:
-						strcpy(datos,"a;03;GRACIAS \n\0");
+						strcpy(datos,"a;91;GRACIAS ..... \n\0");
 						Raspberry_data (datos);
             break;
+						case SIN_PAGO:
+						strcpy(datos,"a;87;NO REGISTRA PAGO \n\0");
+						Raspberry_data (datos);
+            break;
+					
+						default:
+						break;
 						
 				 }
 			 sel_com=1; 	 
