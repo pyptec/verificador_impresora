@@ -209,7 +209,7 @@ lee el dato en el pto serial del codigo qr
 			
 		case  SEQ_SEND_SOFT_QR:
 			/*es un codigo QR*/
-				ES = 0;															/*inactivo pto serie y analizo el dato*/
+			//	ES = 0;															/*inactivo pto serie y analizo el dato*/
 			if (ValTimeOutCom==1)
 			{
 		
@@ -263,7 +263,7 @@ lee el dato en el pto serial del codigo qr
 				{
 					ES = 1;
 					clear_buffer();
-					PantallaLCD(BIENVENIDO);
+				//	PantallaLCD(BIENVENIDO);
 					//send_portERR(TARJETA_INVALIDA);	 
 					ValTimeOutCom=TIME_RX;
 					g_cEstadoImpresion=SEQ_LEECODIGO;		
@@ -276,7 +276,7 @@ lee el dato en el pto serial del codigo qr
 			{
 				ES = 1;																																							/*habilito pto*/
 				Debug_txt_Tibbo((unsigned char *) "fin de lectura de trama\r\n");										/*la respuesta es desconocida*/
-				PantallaLCD(GRACIAS);
+				//PantallaLCD(GRACIAS);
 				ValTimeOutCom=TIME_PULSADOR;
 				clear_buffer();
 				paso_una_vez=0;			 

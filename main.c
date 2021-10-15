@@ -187,12 +187,12 @@ sel_Funcion();																														/*el pulsador funcion es precionadoa
 				Length_trama=recibe_port(buffer);																		/*recibe informacion del pto paralelo*/
 																					
 				//Debug_Dividir_texto();																							/*division del texto */
-				Debug_txt_Tibbo((unsigned char *) "Recibe trama pto:");					/*trama recibida pto paralelo */
+				//Debug_txt_Tibbo((unsigned char *) "Recibe trama pto:");					/*trama recibida pto paralelo */
 				DebugBufferMF(buffer,Length_trama,1);																/*imprimo la trama recibida*/
-				Debug_txt_Tibbo((unsigned char *) " \r\n");
-		   	Debug_txt_Tibbo((unsigned char *) "longitud de la trama:");		/*msj longitud de la trama */
+			//	Debug_txt_Tibbo((unsigned char *) " \r\n");
+		   //	Debug_txt_Tibbo((unsigned char *) "longitud de la trama:");		/*msj longitud de la trama */
 				Debug_chr_Tibbo(Length_trama);																			/*numero de caracteres recibidos*/
-				Debug_txt_Tibbo((unsigned char *) " \r\n");	
+				Debug_txt_Tibbo((unsigned char *) " \n");	
 				//Debug_Dividir_texto();																							/*divido el texto*/
 				
 				Valida_Trama_Pto(buffer,Length_trama);															/*valido la informacion recibida */

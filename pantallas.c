@@ -13,18 +13,23 @@ extern void Block_read_Clock(unsigned char *datos_clock);
 extern void DebugBufferMF(unsigned char *str,unsigned char num_char,char io);
 extern void Debug_Dividir_texto();
 extern void clean_tx();
-extern void serie_ascii_siceros_l(unsigned char *serie);
+//extern void serie_ascii_siceros_l(unsigned char *serie);
 extern void clear_buffer();
+extern void Delay_20us(unsigned int cnt);
 
 #define ERROR_LOOP							0XE0
 #define TARJETA_INVALIDA				0XE1
 #define TARJETA_SIN_FORMATO	    0xDF
 #define ERROR_COD_PARK					0XE5
 #define SIN_INGRESO							0XE6
-#define SIN_PAGO								90
+#define NO_REGISTRA							0x04
+#define EXCEDE_HORARIO					0x07
+#define UN_MOMENTO							0x09
 #define EXCEDE_GRACIA						0XE8
 #define FUERA_DE_LINEA					0XB6
-#define LECTURA_DE_TARJETAS			0xB0
+#define LECTURA_WIEGAND					0xB0
+#define LECTURA_DE_TARJETAS			0xb0
+#define NO_PAGO									0XE7
 
 #define INGRESO									0xFA
 #define BIENVENIDO							0XFE
@@ -123,18 +128,15 @@ void Raspberry_data (unsigned char *msjpantalla)
 	for (i=0; i < lenth_cadena ; i++)
 	{
 			
-		for (d=0; d<100; d++)
+	
+		d=putchar(*(msjpantalla + i));
+		for (d=0; d<200; d++)
    {
 	 }
-		d=putchar(*(msjpantalla + i));
 
 	}
-	
 		
-		for (d=0; d<100; d++)
-   {
-    /*** DO NOTHING ***/
-    }
+
 	
 }
 /*------------------------------------------------------------------------------
@@ -146,24 +148,25 @@ Rutina de msj de pantalla
 ------------------------------------------------------------------------------*/
 void PantallaLCD(unsigned char cod_msg)
 {
-unsigned char bar[15];
+//unsigned char bar[15];
 unsigned char datos[40];
-unsigned char Ini_LCD_Line_one   []={0xaa,0x80,CAN,SOH,STX,0x00} ;
-unsigned char Ini_LCD_Line_two   []={0xaa,0x80,0x18,0x02,0x02,0x00} ;
+//unsigned char Ini_LCD_Line_one   []={0xaa,0x80,CAN,SOH,STX,0x00} ;
+//unsigned char Ini_LCD_Line_two   []={0xaa,0x80,0x18,0x02,0x02,0x00} ;
 
 	
-unsigned char num_chr;
+//unsigned char num_chr;
 
 	
 		sel_com=0;
 	
 		if (Raspberry==0)
-		{
-			LCD_txt (Ini_LCD_Line_one,0);
+		{ 
+			
+			//LCD_txt (Ini_LCD_Line_one,0);
 			
 			switch (cod_msg)
 			{
-		
+				/*
 				case 'P':
 					
 					num_chr=strlen((unsigned char *) "ERROR: VALIDANDO PLACA... ");
@@ -273,6 +276,7 @@ unsigned char num_chr;
 				  LCD_txt_num_char(datos,num_chr,1);
 				 								
 					break;
+					*/
 	}
 				sel_com=1;	
 	}
@@ -289,11 +293,27 @@ unsigned char num_chr;
 						strcpy(datos,"a;91;GRACIAS ..... \n\0");
 						Raspberry_data (datos);
             break;
-						case SIN_PAGO:
-						strcpy(datos,"a;87;NO REGISTRA PAGO \n\0");
+						case NO_REGISTRA:
+						strcpy(datos,"a;87;No TIKET NO REGISTRADO \n\0");
 						Raspberry_data (datos);
             break;
-					
+						case EXCEDE_HORARIO:
+						strcpy(datos,"a;87;EXCEDE HORARIO...\n\0");
+						Raspberry_data (datos);
+						
+						case UN_MOMENTO:
+						strcpy(datos,"a;87;UN MOMENTO .... \n\0");
+						Raspberry_data (datos);
+						break;
+						case ERROR_LOOP:
+						strcpy(datos,"a;87;SIN PRESENCIA VEHICULAR.... \n\0");
+						Raspberry_data (datos);
+						break;
+						
+						case NO_PAGO:
+						strcpy(datos,"a;87;NO REGISTRA PAGO.... \n\0");
+						Raspberry_data (datos);
+						break;
 						default:
 						break;
 						
@@ -305,14 +325,14 @@ void PantallaLCD_LINEA_2(unsigned char cod_msg, unsigned char *buffer)
 {
 	
 unsigned char Ini_LCD_Line_one   []={0xaa,0x80,0x18,0x01,0x02,0x00} ;
-
+unsigned char datos[40];
 
 unsigned char num_chr;
 	
 sel_com=0;
 	
-		//if (Raspberry==0)
-		//{
+		if (Raspberry==0)
+		{
 		
 			
 			switch (cod_msg)
@@ -333,6 +353,40 @@ sel_com=0;
 					break;
 				
 				
-	}
+			}
 				sel_com=1;	
+	}
+		else 
+		{
+			 sel_com=0;  
+			
+       switch (cod_msg)
+			 {
+				  case GRACIAS:
+            strcpy(datos,"a;91;GRACIAS ");
+						num_chr=strlen(buffer);
+						*(buffer+(num_chr-1))=0;
+						strcat(datos,buffer);
+						strcat(datos,"\n\0");
+						Raspberry_data (datos);
+					
+            break;
+					case	LECTURA_WIEGAND:
+						
+										 
+						strcpy(datos,"a;92;WIEGAND ");
+								 
+						strcat(datos,buffer);
+						
+						strcat(datos,"\n\0");
+						
+				 
+						Raspberry_data (datos);
+						
+					
+						break;
+				 
+			 }
+			 sel_com=1;	
+		}
 }

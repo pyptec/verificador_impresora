@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/07/2021 16:30:35 PAGE 1   
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/15/2021 16:07:48 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE NUM_SERIE
@@ -62,7 +62,7 @@ line level    source
   46   1        
   47   1        LeerMemoria(EE_CONSECUTIVO3,cod_serie);
   48   1        return numero= atol(cod_serie);
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/07/2021 16:30:35 PAGE 2   
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/15/2021 16:07:48 PAGE 2   
 
   49   1        
   50   1      } 
@@ -115,18 +115,19 @@ line level    source
   92          y elimino los ceros a la izquierda
   93          ----------------------------------------------------------------------------------------------------------
              -------------------------------*/
-  94          void serie_ascii_siceros_l(unsigned char *serie)
-  95          {
-  96   1        unsigned long int numero;
-  97   1        
-  98   1      
-  99   1        numero=Leer_serie ();
- 100   1        sprintf(serie,"%lu",numero);
- 101   1        ceros_izq(serie);
- 102   1      
- 103   1      }
+  94          
+  95          void serie_ascii_siceros_l(unsigned char *serie)
+  96          {
+  97   1        unsigned long int numero;
+  98   1        
+  99   1      
+ 100   1        numero=Leer_serie ();
+ 101   1        sprintf(serie,"%lu",numero);
+ 102   1        ceros_izq(serie);
+ 103   1      
+ 104   1      }
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/15/2021 16:07:48 PAGE 3   
 
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/07/2021 16:30:35 PAGE 3   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

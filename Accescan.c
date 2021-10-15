@@ -52,12 +52,23 @@ sbit led_err_imp = P0^2;			//Error
 
 /*mensajes de pantalla*/
 #define BIENVENIDO							0XFE
-//#define SIN_PAGO								0XE7
-#define LECTURA_DE_TARJETAS			0xB0
+#define NO_PAGO									0XE7
+#define LECTURA_WIEGAND					0xB0			
 #define GRACIAS									0XFF
 
-#define	PRMR_DIREJASE_A_CAJA		0XA1
+#define PRMR_GRACIAS						0X01
+#define GRACIA_SOFTWARE					0XFF
+#define	PRMR_BIENVENIDO					0X02
+#define BIENVENIDO_SOFTWARE			0XFE
+#define PRMR_NO_REGISTRADO			0X04
+#define NO_REGISTRA							04
+#define PRMR_EXCEDE_HORARIO			07
+#define EXCEDE_HORARIO					07
+#define	PRMR_DIRIJASE_A_CAJA		0X09
+#define UN_MOMENTO							0x09
 #define	SIN_PAGO								90
+#define ERROR_LOOP							0xe0
+
 
 #define SEQ_REINTENTO					0X05
 #define 	TIME_PLACA				55
@@ -122,15 +133,51 @@ void Valida_Trama_Pto(unsigned char *buffer, unsigned char length_trama)
 			}
 			
 		}	
+
+											/*--------------gracias 01 -----------------------------------*/
+		else if ((length_trama==1)&&(*buffer==PRMR_GRACIAS))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+		{
+				 PantallaLCD(GRACIA_SOFTWARE);
+		}
+	
+												/*--------------Bienvenido 02 -----------------------------------*/
+		else if ((length_trama==1)&&(*buffer==PRMR_BIENVENIDO))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+		{
+				 PantallaLCD(BIENVENIDO_SOFTWARE);
+		}
+										/*--------------No registrado 04 -----------------------------------*/
+		else if ((length_trama==1)&&(*buffer==PRMR_NO_REGISTRADO))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+		{
+				 PantallaLCD(NO_REGISTRA);
+		}
+											/* EXCEDE HORARIO  07*/
+		else if ((length_trama==1)&&(*buffer==PRMR_EXCEDE_HORARIO))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+		{
+				 PantallaLCD(EXCEDE_HORARIO);
+		}
+									/*--------------CMD 0x9 msj sin pago-----------------------------*/
+		else if ((length_trama==1)&&(*buffer==PRMR_DIRIJASE_A_CAJA))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+		{
+				 PantallaLCD(UN_MOMENTO);
+		}
+									/*--------------CMD 0xE7 msj NO pago-----------------------------*/
+		else if ((length_trama==1)&&(*buffer==NO_PAGO))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
+		{
+				 PantallaLCD(NO_PAGO);
+		}
 									/*------------msj bienvenido--------------------------*/
 		else if ((length_trama==19)&&(*buffer==STX)&&(*(buffer+1)=='O')&&*(buffer+(length_trama-1))==ETX)										/*mensaje de bienvenidos*/
 		{
  			PantallaLCD(BIENVENIDO);
  		}
-								/*--------------msj Gracias-----------------------------*/
+								/*--------------cmd "V" msj Gracias y nombre del mensual-----------------------------*/
 		else if ((length_trama==19)&&(*buffer==STX)&&(*(buffer+1)=='V')&&*(buffer+(length_trama-1))==ETX)
 		{
-			Debug_txt_Tibbo((unsigned char *) "open barrrera\n");
+			
+			 *(buffer+(length_trama-1))=0;
+			 PantallaLCD_LINEA_2(GRACIAS,buffer+2);																																			/*SE ENVIA EL MSJ GRACIAS lo q envia el software*/
+		
+		
 			length_trama=0;
 			lock=1;		
 			Timer_wait=10;	
@@ -141,37 +188,37 @@ void Valida_Trama_Pto(unsigned char *buffer, unsigned char length_trama)
 			
 			
 		}
-								/*--------------CMD 0xA1 msj sin pago-----------------------------*/
-		else if ((length_trama==1)&&(*buffer==PRMR_DIREJASE_A_CAJA))																																				/*cmd 0xA1 audio caja que es igual a no registra pago */
-		{
-				 PantallaLCD(SIN_PAGO);
-		}
+	
+	
 							/*-------------------------------CMD de wiegand---------------------------------------------------*/
 		else if ((length_trama==6)&&(*buffer==STX)&&(*(buffer+1)=='W')&&*(buffer+(length_trama-1))==ETX)										/* cmd q comunica con monitor po wigan*/
 		{
+				/*-------------------------------se covierte el numero serie de la tarjeta------------------------------*/
+							ByteHex_Decimal(buff,*(buffer+2));																																				/*convierto el primer byte_hex a decimal		*/
+							buff[3]=' ';
+							Two_ByteHex_Decimal(buff+4,*(buffer+3),*(buffer+4))	;																											/*convierto un byte de 16 bits a decimal*/		
+				/*------------------------------------------------------------------------------------------------------*/
 				if (USE_LPR==1)
 				{
 							/*-------------------------------mensaje en la pantalla---------------------------------------------------*/
-							ByteHex_Decimal(buff,*(buffer+2));																																				/*convierto el primer byte_hex a decimal		*/
-							buff[3]=' ';
-							Two_ByteHex_Decimal(buff+4,*(buffer+3),*(buffer+4))	;																											/*convierto un byte de 16 bits a decimal*/																									
-						
-							PantallaLCD_LINEA_2(LECTURA_DE_TARJETAS,buff);
-																																																												/*transmito el codigo de la tarjeta a la pantalla lcd*/
-							/*--------------------------------------------------------------------------------------------------------*/
+							if (ValidaSensoresPaso()!= 0xff)
+							{								
+								PantallaLCD(ERROR_LOOP);
+								PantallaLCD_LINEA_2(LECTURA_WIEGAND,buff);																																/*msj rasberry*/
+							}
+							else
+							{
+								Cmd_LPR_Salida_wiegand(buff);
+								PantallaLCD_LINEA_2(LECTURA_WIEGAND,buff);																																/*msj rasberry*/
+							}
 					
-							while(!ValidaSensoresPaso());
-								
-							Cmd_LPR_Salida_wiegand(buff);
 				}																																							
 				
 				else
 				{
 					 /*-------------------------------mensaje en la pantalla---------------------------------------------------*/
-							ByteHex_Decimal(buff,*(buffer+2));																																				/*convierto el primer byte_hex a decimal		*/
-							buff[3]=' ';
-							Two_ByteHex_Decimal(buff+4,*(buffer+3),*(buffer+4))	;																											/*convierto un byte de 16 bits a decimal*/																									
-							PantallaLCD_LINEA_2(LECTURA_DE_TARJETAS,buff);																														/*transmito el codigo de la tarjeta a la pantalla lcd*/
+																																/*convierto un byte de 16 bits a decimal*/																									
+							PantallaLCD_LINEA_2(LECTURA_WIEGAND,buff);																														/*transmito el codigo de la tarjeta a la pantalla lcd*/
 																																																		
 					/*--------------------------------------------------------------------------------------------------------*/	
 				
@@ -187,11 +234,13 @@ void Valida_Trama_Pto(unsigned char *buffer, unsigned char length_trama)
 				
 			
 		}
+		/*apertura por access*/
 		else if (*buffer==0XAB)
 		{	
+			 PantallaLCD(GRACIA_SOFTWARE);
 				ValTimeOutCom=TIME_PLACA;
 				g_cEstadoImpresion=SEQ_CMNCCN_PTO	;	
-				//g_cEstadoImpresion=SEQ_REINTENTO	;	
+				
 		}
 		
 }

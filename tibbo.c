@@ -173,7 +173,7 @@ void DebugBufferMF(unsigned char *str,unsigned char num_char,char io)
 		Debug_chr_Tibbo(*str);
 		str++;
 		}
-		tx_aux('\r');
+		//tx_aux('\r');
 		tx_aux('\n');
   }
 

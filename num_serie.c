@@ -91,6 +91,7 @@ void ceros_izq(unsigned char *dato)
 leo la serie en eeprom en hex y lo paso a ascii
 y elimino los ceros a la izquierda
 ----------------------------------------------------------------------------------------------------------------------------------------*/
+
 void serie_ascii_siceros_l(unsigned char *serie)
 {
 	unsigned long int numero;
