@@ -38,7 +38,7 @@ void graba_serie(unsigned long int numero)
 leo la serie de eeprom y la debuelvo en 
 un long int en hex
 ----------------------------------------------------------------------------------------------------------------------------------------*/
-
+/*
 unsigned long int  Leer_serie ()
 {
 	unsigned long int numero;
@@ -47,7 +47,7 @@ unsigned long int  Leer_serie ()
 	LeerMemoria(EE_CONSECUTIVO3,cod_serie);
 	return numero= atol(cod_serie);
 	
-}	
+}	*/
 /*---------------------------------------------------------------------------------------------------------------------------------------
 incremento el numero de serie y lo grabo en eeprom
 ----------------------------------------------------------------------------------------------------------------------------------------*/
@@ -68,7 +68,7 @@ void incremente_serie()
 rutina que quita los ceros a la izquierda en ascii 0x30 y los cambia  por cero
 al primer caracter diferente de cero ascii 0x30 aborta la funcion
 ----------------------------------------------------------------------------------------------------------------------------------------*/
-
+/*
 void ceros_izq(unsigned char *dato)
 {
 	unsigned char p,j,temp;
@@ -86,12 +86,12 @@ void ceros_izq(unsigned char *dato)
 				 	break;
 				}	
 			}
-}	
+}	*/
 /*---------------------------------------------------------------------------------------------------------------------------------------
 leo la serie en eeprom en hex y lo paso a ascii
 y elimino los ceros a la izquierda
 ----------------------------------------------------------------------------------------------------------------------------------------*/
-
+/*
 void serie_ascii_siceros_l(unsigned char *serie)
 {
 	unsigned long int numero;
@@ -101,4 +101,4 @@ void serie_ascii_siceros_l(unsigned char *serie)
 	sprintf(serie,"%lu",numero);
 	ceros_izq(serie);
 
-}
+}*/

@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/15/2021 16:07:48 PAGE 1   
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/20/2021 12:17:08 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE NUM_SERIE
@@ -54,18 +54,18 @@ line level    source
   39          un long int en hex
   40          ----------------------------------------------------------------------------------------------------------
              -------------------------------*/
-  41          
+  41          /*
   42          unsigned long int  Leer_serie ()
   43          {
-  44   1        unsigned long int numero;
-  45   1        unsigned char cod_serie[10];
-  46   1        
-  47   1        LeerMemoria(EE_CONSECUTIVO3,cod_serie);
-  48   1        return numero= atol(cod_serie);
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/15/2021 16:07:48 PAGE 2   
+  44            unsigned long int numero;
+  45            unsigned char cod_serie[10];
+  46            
+  47            LeerMemoria(EE_CONSECUTIVO3,cod_serie);
+  48            return numero= atol(cod_serie);
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/20/2021 12:17:08 PAGE 2   
 
-  49   1        
-  50   1      } 
+  49            
+  50          } */
   51          /*--------------------------------------------------------------------------------------------------------
              --------------------------------
   52          incremento el numero de serie y lo grabo en eeprom
@@ -90,50 +90,50 @@ line level    source
   69          al primer caracter diferente de cero ascii 0x30 aborta la funcion
   70          ----------------------------------------------------------------------------------------------------------
              -------------------------------*/
-  71          
+  71          /*
   72          void ceros_izq(unsigned char *dato)
   73          {
-  74   1        unsigned char p,j,temp;
-  75   1      
-  76   1            p=9;
-  77   1            for (j=0; j<10; j++)
-  78   1            {
-  79   2              temp=*(dato+(p-j));
-  80   2              if (temp==0x30)
-  81   2              {
-  82   3               *(dato+(p-j))=0;
-  83   3              }
-  84   2              else
-  85   2              {
-  86   3                break;
-  87   3              } 
-  88   2            }
-  89   1      } 
+  74            unsigned char p,j,temp;
+  75          
+  76                p=9;
+  77                for (j=0; j<10; j++)
+  78                {
+  79                  temp=*(dato+(p-j));
+  80                  if (temp==0x30)
+  81                  {
+  82                   *(dato+(p-j))=0;
+  83                  }
+  84                  else
+  85                  {
+  86                    break;
+  87                  } 
+  88                }
+  89          } */
   90          /*--------------------------------------------------------------------------------------------------------
              --------------------------------
   91          leo la serie en eeprom en hex y lo paso a ascii
   92          y elimino los ceros a la izquierda
   93          ----------------------------------------------------------------------------------------------------------
              -------------------------------*/
-  94          
+  94          /*
   95          void serie_ascii_siceros_l(unsigned char *serie)
   96          {
-  97   1        unsigned long int numero;
-  98   1        
-  99   1      
- 100   1        numero=Leer_serie ();
- 101   1        sprintf(serie,"%lu",numero);
- 102   1        ceros_izq(serie);
- 103   1      
- 104   1      }
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/15/2021 16:07:48 PAGE 3   
+  97            unsigned long int numero;
+  98            
+  99          
+ 100            numero=Leer_serie ();
+ 101            sprintf(serie,"%lu",numero);
+ 102            ceros_izq(serie);
+ 103          
+ 104          }*/
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/20/2021 12:17:08 PAGE 3   
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    165    ----
-   CONSTANT SIZE    =      4    ----
-   XDATA SIZE       =   ----      19
+   CODE SIZE        =     16    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

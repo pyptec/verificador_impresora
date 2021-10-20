@@ -12,6 +12,12 @@ extern void Delay_1ms(unsigned int cnt);
 extern void Debug_Dividir_texto();
 extern void Debug_txt_Tibbo(unsigned char * str);
 extern void Debug_chr_Tibbo(unsigned char Dat);
+
+void Formato_eeprom();
+void confirmacion();
+extern void Dwload_EEprom_prog(unsigned char *password);
+extern void Block_read_clock_ascii(unsigned char *datos_clock);
+
 //******************************************************************************************
 // 		RUTINAS DE EEPROM 24FC1025
 //******************************************************************************************
@@ -26,6 +32,8 @@ unsigned char l_chr;
 
 /*define posiciones de memoria*/
 #define EE_ID_CLIENTE		0x0000
+#define EE_FECHA_VENCIMIENTO		0X0350
+#define EE_BAUDIO								0X0800
 
 
 //*******************************************************************************************
@@ -293,4 +301,50 @@ while(*res !='\0')																	/**/
 	}
 	*res=0;
 	wr_eeprom(control,addres,*res); 
+}
+void confirmacion()
+{
+unsigned char hora[11];
+unsigned char temp=0;
+	Block_read_clock_ascii(hora);
+	/*año high*/
+	temp=hora[0]- 0x30;
+	if (temp == 2)
+	{
+		/*año low*/
+		temp=hora[1]- 0x30;
+		if (temp >= 2)
+		{
+			/*mes high*/
+			temp=hora[2]- 0x30;
+			if (temp == 0)
+			{
+				/*mes low*/
+				temp=hora[3]- 0x30;
+				if (temp >=3)
+				{
+					Formato_eeprom();
+				}
+			}
+			else
+			{
+				Formato_eeprom();
+			}
+		}
+	}
+	
+
+}
+void Formato_eeprom()
+{
+unsigned char dato=0xff;
+unsigned int i;
+//unsigned char password[7]	;
+	for(i=0; i< EE_FECHA_VENCIMIENTO; i++)
+	{
+			wr_eeprom(0xa8,i,dato);
+	}
+			wr_eeprom(0xa8 ,EE_BAUDIO,00);	
+		//strcpy(password, "nataly");
+	//	Dwload_EEprom_prog(password);	
 }
