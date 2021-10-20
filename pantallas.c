@@ -286,32 +286,32 @@ unsigned char datos[40];
          switch (cod_msg)
          {
 					 case BIENVENIDO:
-						strcpy(datos,"a;03;ACERQUE SU TICKET\n\0");
+						strcpy(datos,"a;85;ACERQUE SU TICKET\n\0");
 						Raspberry_data (datos);
             break;
 					 	case GRACIAS:
-						strcpy(datos,"a;91;GRACIAS ..... \n\0");
+						strcpy(datos,"a;89;GRACIAS ..... \n\0");
 						Raspberry_data (datos);
             break;
 						case NO_REGISTRA:
-						strcpy(datos,"a;87;No TIKET NO REGISTRADO \n\0");
+						strcpy(datos,"a;97;No TIKET NO REGISTRADO \n\0");
 						Raspberry_data (datos);
             break;
 						case EXCEDE_HORARIO:
-						strcpy(datos,"a;87;EXCEDE HORARIO...\n\0");
+						strcpy(datos,"a;88;EXCEDE HORARIO...\n\0");
 						Raspberry_data (datos);
 						
 						case UN_MOMENTO:
-						strcpy(datos,"a;87;UN MOMENTO .... \n\0");
+						strcpy(datos,"a;95;UN MOMENTO .... \n\0");
 						Raspberry_data (datos);
 						break;
 						case ERROR_LOOP:
-						strcpy(datos,"a;87;SIN PRESENCIA VEHICULAR.... \n\0");
+						strcpy(datos,"a;96;SIN PRESENCIA VEHICULAR.... \n\0");
 						Raspberry_data (datos);
 						break;
 						
 						case NO_PAGO:
-						strcpy(datos,"a;87;NO REGISTRA PAGO.... \n\0");
+						strcpy(datos,"a;90;NO REGISTRA PAGO.... \n\0");
 						Raspberry_data (datos);
 						break;
 						default:
@@ -363,7 +363,7 @@ sel_com=0;
        switch (cod_msg)
 			 {
 				  case GRACIAS:
-            strcpy(datos,"a;91;GRACIAS ");
+            strcpy(datos,"a;92;GRACIAS ");
 						num_chr=strlen(buffer);
 						*(buffer+(num_chr-1))=0;
 						strcat(datos,buffer);
@@ -374,7 +374,7 @@ sel_com=0;
 					case	LECTURA_WIEGAND:
 						
 										 
-						strcpy(datos,"a;92;WIEGAND ");
+						strcpy(datos,"a;98;WIEGAND ");
 								 
 						strcat(datos,buffer);
 						

@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 1   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PANTALLAS
@@ -62,7 +62,7 @@ line level    source
   52          
   53          /*------------------------------------------------------------------------------
   54          transmite el caracter pto serie
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 2   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 2   
 
   55          data_com = al caracter a escribir
   56          enable_char_add = si esta en (1) envia un null (0) adicional, si es (0) no envia caracter adicional
@@ -126,7 +126,7 @@ line level    source
              -/
  114   1                                                            
  115   1                REN = 1;                                                                        /*habilita recepcion de datos*/
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 3   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 3   
 
  116   1                sel_com=1;                                                                      /*switch pto serie a verificador o expedidor */
  117   1      }
@@ -190,7 +190,7 @@ line level    source
  174   3                tx_chrlcd(num_chr*2,0);
  175   3                LCD_txt ((unsigned char *)       "ERROR: VALIDANDO PLACA... ",1);
  176   3                
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 4   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 4   
 
  177   3                break;
  178   3      
@@ -254,7 +254,7 @@ line level    source
  236   3                tx_chrlcd(0x00,0);
  237   3                tx_chrlcd(num_chr*2,0);
  238   3                LCD_txt((unsigned char *)        "FUERA DE LINEA ",1);
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 5   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 5   
 
  239   3              
  240   3                break;
@@ -306,34 +306,34 @@ line level    source
  286   2               switch (cod_msg)
  287   2               {
  288   3                 case BIENVENIDO:
- 289   3                  strcpy(datos,"a;03;ACERQUE SU TICKET\n\0");
+ 289   3                  strcpy(datos,"a;85;ACERQUE SU TICKET\n\0");
  290   3                  Raspberry_data (datos);
  291   3                  break;
  292   3                  case GRACIAS:
- 293   3                  strcpy(datos,"a;91;GRACIAS ..... \n\0");
+ 293   3                  strcpy(datos,"a;89;GRACIAS ..... \n\0");
  294   3                  Raspberry_data (datos);
  295   3                  break;
  296   3                  case NO_REGISTRA:
- 297   3                  strcpy(datos,"a;87;No TIKET NO REGISTRADO \n\0");
+ 297   3                  strcpy(datos,"a;97;No TIKET NO REGISTRADO \n\0");
  298   3                  Raspberry_data (datos);
  299   3                  break;
  300   3                  case EXCEDE_HORARIO:
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 6   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 6   
 
- 301   3                  strcpy(datos,"a;87;EXCEDE HORARIO...\n\0");
+ 301   3                  strcpy(datos,"a;88;EXCEDE HORARIO...\n\0");
  302   3                  Raspberry_data (datos);
  303   3                  
  304   3                  case UN_MOMENTO:
- 305   3                  strcpy(datos,"a;87;UN MOMENTO .... \n\0");
+ 305   3                  strcpy(datos,"a;95;UN MOMENTO .... \n\0");
  306   3                  Raspberry_data (datos);
  307   3                  break;
  308   3                  case ERROR_LOOP:
- 309   3                  strcpy(datos,"a;87;SIN PRESENCIA VEHICULAR.... \n\0");
+ 309   3                  strcpy(datos,"a;96;SIN PRESENCIA VEHICULAR.... \n\0");
  310   3                  Raspberry_data (datos);
  311   3                  break;
  312   3                  
  313   3                  case NO_PAGO:
- 314   3                  strcpy(datos,"a;87;NO REGISTRA PAGO.... \n\0");
+ 314   3                  strcpy(datos,"a;90;NO REGISTRA PAGO.... \n\0");
  315   3                  Raspberry_data (datos);
  316   3                  break;
  317   3                  default:
@@ -382,14 +382,14 @@ line level    source
  358   2        }
  359   1          else 
  360   1          {
-C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 12:17:08 PAGE 7   
+C51 COMPILER V9.59.0.0   PANTALLAS                                                         10/20/2021 16:01:04 PAGE 7   
 
  361   2             sel_com=0;  
  362   2            
  363   2             switch (cod_msg)
  364   2             {
  365   3                case GRACIAS:
- 366   3                  strcpy(datos,"a;91;GRACIAS ");
+ 366   3                  strcpy(datos,"a;92;GRACIAS ");
  367   3                  num_chr=strlen(buffer);
  368   3                  *(buffer+(num_chr-1))=0;
  369   3                  strcat(datos,buffer);
@@ -400,7 +400,7 @@ line level    source
  374   3                case  LECTURA_WIEGAND:
  375   3                  
  376   3                           
- 377   3                  strcpy(datos,"a;92;WIEGAND ");
+ 377   3                  strcpy(datos,"a;98;WIEGAND ");
  378   3                       
  379   3                  strcat(datos,buffer);
  380   3                  

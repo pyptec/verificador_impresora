@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    10/20/2021  12:17:09  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    10/20/2021  16:01:04  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -59,7 +59,7 @@ INPUT MODULES INCLUDED:
   C:\KEIL_V5\C51\LIB\C51L.LIB (?C?PLDIXDATA)
   C:\KEIL_V5\C51\LIB\C51L.LIB (?C?PSTXDATA)
   C:\KEIL_V5\C51\LIB\C51L.LIB (?C?CCASE)
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 2
 
 
   C:\KEIL_V5\C51\LIB\C51L.LIB (STRCAT)
@@ -119,7 +119,7 @@ LINK MAP OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
             CODE    1849H     0483H     UNIT         ?PR?PRINTF?PRINTF
             CODE    1CCCH     03A7H     UNIT         ?PR?_VALIDA_TRAMA_PTO?ACCESCAN
             CODE    2073H     02F0H     UNIT         ?PR?LEE_TICKET?VERPRINT
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 3
 
 
             CODE    2363H     02D0H     UNIT         ?PR?_TWO_BYTEHEX_DECIMAL?CLOCK
@@ -179,7 +179,7 @@ LINK MAP OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
             CODE    5002H     005EH     UNIT         ?PR?_RASPBERRY_DATA?PANTALLAS
             CODE    5060H     0058H     UNIT         ?PR?_LEERMEMORIA?EEPROM
             CODE    50B8H     0057H     UNIT         ?CO?TIBBO
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 4
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 4
 
 
             CODE    510FH     0053H     UNIT         ?PR?_BYTEHEX_DECIMAL?CLOCK
@@ -239,7 +239,7 @@ LINK MAP OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
             CODE    5BC1H     0012H     UNIT         ?PR?COM_RBUFLEN?UART
             CODE    5BD3H     0012H     UNIT         ?PR?COM_TBUFLEN?UART
             CODE    5BE5H     0010H     UNIT         ?PR?INI_TIMER?MAIN
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 5
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 5
 
 
             CODE    5BF5H     0010H     UNIT         ?PR?INICIA_BOARD?MAIN
@@ -299,7 +299,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
   +--> ?PR?_DEBUG_CHR_TIBBO?TIBBO
   +--> ?CO?MAIN
   +--> ?PR?_VALIDA_TRAMA_PTO?ACCESCAN
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 6
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 6
 
 
   +--> ?PR?MSJ_LCD_INFORMATIVO?IO_SENSORES
@@ -359,7 +359,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
   +--> ?PR?PROG_CLIENTE?PROG
   +--> ?PR?PROG_NIT?PROG
   +--> ?PR?PROG_NOM_PARQ?PROG
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 7
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 7
 
 
   +--> ?PR?PROG_DIRECCION?PROG
@@ -419,7 +419,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
 
 ?PR?_LISTACOMANDOS?PROG                          -----    -----      -----    -----      003FH    0007H
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 8
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 8
 
 
 ?PR?PROG_ID_CLIENTE?PROG                         -----    -----      -----    -----      003FH    000CH
@@ -479,7 +479,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
 
 ?PR?PROG_USE_LPR?PROG                            -----    -----      -----    -----      003FH    000CH
   +--> ?PR?_RD_EEPROM?EEPROM
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 9
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 9
 
 
   +--> ?CO?PROG
@@ -539,7 +539,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
   +--> ?PR?_ESCRIBIRMEMORIA?EEPROM
   +--> ?PR?_LEERMEMORIA?EEPROM
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 10
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 10
 
 
 ?PR?PROG_DIRECCION?PROG                          -----    -----      -----    -----      003FH    0030H
@@ -599,7 +599,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
   +--> ?PR?_LEERMEMORIA?EEPROM
 
 ?PR?SHOW?PROG                                    -----    -----      -----    -----      -----    -----
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 11
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 11
 
 
   +--> ?CO?PROG
@@ -659,7 +659,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
 
 ?PR?_PANTALLALCD?PANTALLAS                       -----    -----      -----    -----      001DH    0028H
   +--> ?CO?PANTALLAS
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 12
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 12
 
 
   +--> ?PR?_RASPBERRY_DATA?PANTALLAS
@@ -719,7 +719,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
 
 ?PR?_MONITOR_CHR?MONITOR                         -----    -----      -----    -----      003FH    0005H
   +--> ?PR?_TX_AUX?TIBBO
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 13
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 13
 
 
 
@@ -779,7 +779,7 @@ SEGMENT                                             BIT_GROUP          DATA_GROU
 ?PR?_PANTALLALCD_LINEA_2?PANTALLAS               -----    -----      -----    -----      001DH    0033H
   +--> ?CO?PANTALLAS
   +--> ?PR?_LCD_TXT?PANTALLAS
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 14
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 14
 
 
   +--> ?PR?_STRLEN?STRLEN
@@ -839,7 +839,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   D:0090H         PUBLIC        P1
   C:5B0AH         PUBLIC        timer0_int
   D:00B0H         PUBLIC        P3
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 15
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 15
 
 
   X:013CH         PUBLIC        placa
@@ -899,7 +899,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5BE5H         LINE#         26
   C:5BEDH         LINE#         28
   C:5BF0H         LINE#         29
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 16
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 16
 
 
   C:5BF2H         LINE#         30
@@ -959,7 +959,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5C04H         LINE#         110
   -------         ENDPROC       INICIA_BOARD
   -------         PROC          VARIABLE_INICIO
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 17
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 17
 
 
   C:494FH         LINE#         114
@@ -1019,7 +1019,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:414AH         LINE#         195
   C:4153H         LINE#         198
   C:4161H         LINE#         200
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 18
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 18
 
 
   C:4161H         LINE#         201
@@ -1079,7 +1079,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         ENDPROC       L?0046
   -------         PROC          _LEE_CLK
   X:0042H         SYMBOL        dir_clk
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 19
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 19
 
 
   -------         DO            
@@ -1139,7 +1139,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:560AH         LINE#         99
   C:560AH         LINE#         100
   C:560AH         LINE#         102
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 20
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 20
 
 
   C:560DH         LINE#         103
@@ -1199,7 +1199,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5AAFH         LINE#         167
   C:5AB3H         LINE#         168
   C:5AB6H         LINE#         169
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 21
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 21
 
 
   C:5AB6H         LINE#         170
@@ -1259,7 +1259,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:238AH         LINE#         251
   C:2390H         LINE#         253
   C:23EBH         LINE#         254
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 22
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 22
 
 
   C:23F3H         LINE#         255
@@ -1319,7 +1319,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:28B4H         LINE#         317
   C:28B9H         LINE#         318
   C:28D1H         LINE#         319
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 23
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 23
 
 
   C:28DBH         LINE#         320
@@ -1379,7 +1379,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
 
   -------         MODULE        DELAY
   C:0000H         SYMBOL        _ICE_DUMMY_
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 24
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 24
 
 
   C:5B79H         PUBLIC        _Delay_20us
@@ -1439,7 +1439,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         ENDPROC       L?0055
   -------         PROC          ACKD
   -------         DO            
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 25
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 25
 
 
   D:0006H         SYMBOL        i
@@ -1499,7 +1499,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   D:0006H         SYMBOL        nbits
   -------         ENDDO         
   C:59F8H         LINE#         88
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 26
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 26
 
 
   C:59F8H         LINE#         89
@@ -1559,7 +1559,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:518AH         LINE#         141
   C:518AH         LINE#         142
   C:518DH         LINE#         143
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 27
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 27
 
 
   C:518DH         LINE#         144
@@ -1619,7 +1619,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:58C8H         LINE#         242
   C:58C8H         LINE#         244
   C:58C8H         LINE#         245
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 28
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 28
 
 
   C:58C8H         LINE#         247
@@ -1679,7 +1679,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         PROC          CONFIRMACION
   -------         DO            
   X:001DH         SYMBOL        hora
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 29
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 29
 
 
   D:0007H         SYMBOL        temp
@@ -1739,7 +1739,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5C86H         PUBLIC        sel_Sensor1
   C:5C7FH         PUBLIC        sel_Sensor2
   B:00B0H.5       PUBLIC        sel_A
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 30
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 30
 
 
   B:00B0H.6       PUBLIC        sel_B
@@ -1799,7 +1799,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         PROC          VALIDASENSOR
   -------         DO            
   D:0007H         SYMBOL        Valido
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 31
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 31
 
 
   D:0004H         SYMBOL        Tmin
@@ -1859,7 +1859,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4E1FH         LINE#         134
   C:4E1FH         LINE#         135
   C:4E26H         LINE#         136
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 32
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 32
 
 
   C:4E2BH         LINE#         137
@@ -1919,7 +1919,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4DB7H         LINE#         205
   C:4DB9H         LINE#         206
   C:4DC5H         LINE#         207
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 33
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 33
 
 
   C:4DC5H         LINE#         208
@@ -1979,7 +1979,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4634H         LINE#         58
   C:4634H         LINE#         59
   C:4636H         LINE#         60
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 34
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 34
 
 
   C:463EH         LINE#         61
@@ -2039,7 +2039,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5633H         LINE#         160
   C:5633H         LINE#         161
   C:5645H         LINE#         162
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 35
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 35
 
 
   C:564FH         LINE#         163
@@ -2099,7 +2099,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:3929H         LINE#         287
   C:3937H         LINE#         289
   C:3943H         LINE#         292
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 36
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 36
 
 
   C:3954H         LINE#         293
@@ -2159,7 +2159,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5859H         LINE#         74
   C:5859H         LINE#         77
   C:5876H         LINE#         78
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 37
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 37
 
 
   C:5876H         LINE#         79
@@ -2219,7 +2219,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         ENDPROC       _RASPBERRY_DATA
   -------         PROC          _PANTALLALCD
   D:0007H         SYMBOL        cod_msg
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 38
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 38
 
 
   -------         DO            
@@ -2279,7 +2279,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         DO            
   X:0021H         SYMBOL        Ini_LCD_Line_one
   X:0027H         SYMBOL        datos
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 39
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 39
 
 
   X:004FH         SYMBOL        num_chr
@@ -2339,7 +2339,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   X:00B5H         PUBLIC        validacion
   X:00BEH         PUBLIC        cursor
   C:3C26H         PUBLIC        Show
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 40
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 40
 
 
   C:523EH         PUBLIC        Prog_Nit
@@ -2399,7 +2399,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:55D1H         LINE#         108
   C:55D3H         LINE#         111
   C:55D5H         LINE#         112
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 41
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 41
 
 
   -------         ENDPROC       _VALIDARCLAVE
@@ -2459,7 +2459,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4D2BH         LINE#         165
   C:4D2BH         LINE#         166
   C:4D46H         LINE#         167
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 42
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 42
 
 
   C:4D48H         LINE#         169
@@ -2519,7 +2519,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4021H         LINE#         237
   C:4038H         LINE#         239
   C:4041H         LINE#         240
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 43
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 43
 
 
   C:404CH         LINE#         241
@@ -2579,7 +2579,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:32F3H         LINE#         306
   C:32FDH         LINE#         307
   C:32FDH         LINE#         308
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 44
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 44
 
 
   C:3310H         LINE#         309
@@ -2639,7 +2639,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         ENDDO         
   C:34BBH         LINE#         372
   C:34BBH         LINE#         373
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 45
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 45
 
 
   C:34BBH         LINE#         378
@@ -2699,7 +2699,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         ENDPROC       PROG_COMPARACION_ACTIVA
   -------         PROC          PROG_QR_BARRAS
   -------         DO            
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 46
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 46
 
 
   X:003FH         SYMBOL        buffer
@@ -2759,7 +2759,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         DO            
   X:003FH         SYMBOL        buffer
   -------         ENDDO         
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 47
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 47
 
 
   C:5285H         LINE#         509
@@ -2819,7 +2819,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:53D1H         LINE#         563
   -------         ENDPROC       PROG_MSJ3
   -------         PROC          PROG_MSJ4
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 48
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 48
 
 
   -------         DO            
@@ -2879,7 +2879,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:3C4AH         LINE#         621
   C:3C53H         LINE#         622
   C:3C5CH         LINE#         623
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 49
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 49
 
 
   C:3C65H         LINE#         624
@@ -2939,7 +2939,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:2738H         LINE#         703
   C:2738H         LINE#         705
   C:2747H         LINE#         706
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 50
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 50
 
 
   C:2765H         LINE#         707
@@ -2999,7 +2999,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:282DH         LINE#         793
   C:2830H         LINE#         795
   C:2833H         LINE#         796
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 51
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 51
 
 
   C:2833H         LINE#         798
@@ -3059,7 +3059,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4574H         LINE#         73
   C:4576H         LINE#         74
   C:457AH         LINE#         75
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 52
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 52
 
 
   C:457CH         LINE#         76
@@ -3119,7 +3119,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4290H         LINE#         144
   C:4290H         LINE#         145
   C:4292H         LINE#         146
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 53
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 53
 
 
   C:429BH         LINE#         147
@@ -3179,7 +3179,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5BAFH         LINE#         501
   C:5BB1H         LINE#         502
   C:5BB8H         LINE#         503
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 54
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 54
 
 
   C:5BBAH         LINE#         504
@@ -3239,7 +3239,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5943H         LINE#         568
   C:594DH         LINE#         569
   C:5951H         LINE#         573
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 55
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 55
 
 
   -------         ENDPROC       LOAD_AND_SEND_INFO_RELOJ
@@ -3299,7 +3299,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   -------         PROC          L?0057
   -------         ENDPROC       L?0057
   C:5A5AH         SYMBOL        L?0058
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 56
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 56
 
 
   -------         PROC          TIME_BIT
@@ -3359,7 +3359,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:51B8H         LINE#         69
   C:51B9H         LINE#         70
   C:51BAH         LINE#         71
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 57
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 57
 
 
   C:51BCH         LINE#         72
@@ -3419,7 +3419,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4E5FH         LINE#         160
   C:4E6DH         LINE#         161
   C:4E6DH         LINE#         165
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 58
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 58
 
 
   C:4E75H         LINE#         166
@@ -3479,7 +3479,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:4B20H         LINE#         232
   C:4B2CH         LINE#         233
   C:4B2CH         LINE#         235
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 59
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 59
 
 
   C:4B2FH         LINE#         237
@@ -3539,7 +3539,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:57D1H         PUBLIC        com_baudrate
   C:4B73H         SYMBOL        com_isr
   -------         PROC          COM_ISR
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 60
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 60
 
 
   -------         DO            
@@ -3599,7 +3599,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:597FH         LINE#         331
   C:5981H         LINE#         332
   -------         ENDPROC       COM_INITIALIZE
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 61
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 61
 
 
   -------         PROC          COM_BAUDRATE
@@ -3659,7 +3659,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:5BC8H         LINE#         421
   C:5BC8H         LINE#         422
   C:5BCEH         LINE#         423
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 62
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 62
 
 
   -------         ENDPROC       COM_RBUFLEN
@@ -3719,7 +3719,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:1D65H         LINE#         111
   C:1D65H         LINE#         113
   C:1D65H         LINE#         114
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 63
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 63
 
 
   C:1D65H         LINE#         115
@@ -3779,7 +3779,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:1F32H         LINE#         188
   C:1F34H         LINE#         189
   C:1F3AH         LINE#         190
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 64
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 64
 
 
   C:1F3FH         LINE#         191
@@ -3839,7 +3839,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:59D4H         LINE#         65
   C:59D4H         LINE#         66
   C:59D6H         LINE#         67
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 65
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 65
 
 
   C:59EDH         LINE#         68
@@ -3899,7 +3899,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:20CEH         LINE#         127
   C:20D7H         LINE#         128
   C:20DCH         LINE#         129
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 66
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 66
 
 
   C:20DCH         LINE#         130
@@ -3959,7 +3959,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:21D8H         LINE#         208
   C:21DBH         LINE#         210
   C:21DBH         LINE#         213
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 67
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 67
 
 
   C:21E6H         LINE#         214
@@ -4019,7 +4019,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:232FH         LINE#         285
   C:2331H         LINE#         286
   C:2331H         LINE#         287
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 68
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 68
 
 
   C:2336H         LINE#         288
@@ -4079,7 +4079,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
 
   -------         MODULE        ?C?FPNEG
   C:10AAH         PUBLIC        ?C?FPNEG
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 69
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 69
 
 
   -------         ENDMOD        ?C?FPNEG
@@ -4139,7 +4139,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
 
   -------         MODULE        ?C?LLDCODE
   C:14EEH         PUBLIC        ?C?LLDCODE
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 70
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 70
 
 
   -------         ENDMOD        ?C?LLDCODE
@@ -4199,7 +4199,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\VRFCDOR_PRINT_100 (MAIN)
   C:000EH         PUBLIC        _STRLEN
   -------         ENDMOD        STRLEN
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  12:17:09  PAGE 71
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/20/2021  16:01:04  PAGE 71
 
 
   -------         MODULE        STRSTR
