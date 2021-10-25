@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   52          #define  STORE_DATA         3
   53          
   54          
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 2   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 2   
 
   55          
   56          /*tiempo de delay entre funciones*/
@@ -126,7 +126,7 @@ line level    source
  114   1      Received data interrupt.
  115   1      ------------------------------------------------*/
  116   1      if (RI != 0)
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 3   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 3   
 
  117   1        {
  118   2          
@@ -190,7 +190,7 @@ line level    source
  176   2      //        {
  177   2      //          buffer_ready=2;                                 /*no hay papel*/    
  178   2      //          g_cEstadoComSoft=ESPERA_RX;
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 4   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 4   
 
  179   2      //        }
  180   2      //        else if (Buffer_Rta_Lintech[0]==RS)
@@ -254,7 +254,7 @@ line level    source
  238   2        //        if(Buffer_Rta_Lintech[g_cContByteRx-2]==ETX)
  239   2        //        {
  240   2        //          bcc=0;
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 5   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 5   
 
  241   2      //            for (k=0; k<g_cContByteRx-1; k++)
  242   2        //          {
@@ -318,7 +318,7 @@ line level    source
  300          ------------------------------------------------------------------------------*/
  301          #pragma disable
  302          
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 6   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 6   
 
  303          void com_initialize (void)
  304          {
@@ -382,7 +382,7 @@ line level    source
  362   2      TH1 =0xf4;// (unsigned char) (256 - (XTAL / (16L * 12L * baudrate)));
  363   2      TL1=0xf4;
  364   2      TR1 = 1;            /* start timer 1 */
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 7   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 7   
 
  365   2      }
  366   1        else
@@ -446,7 +446,7 @@ line level    source
  424          
  425          /*------------------------------------------------------------------------------
  426          ------------------------------------------------------------------------------*/
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 8   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 8   
 
  427          #pragma disable
  428          
@@ -510,7 +510,7 @@ line level    source
  486              temp=(Dat&0x0f);
  487              (temp>0x09)?(temp=temp+0x37):(temp=temp+0x30);
  488              d=putchar(temp);  
-C51 COMPILER V9.59.0.0   UART                                                              10/20/2021 16:01:04 PAGE 9   
+C51 COMPILER V9.59.0.0   UART                                                              10/25/2021 16:12:58 PAGE 9   
 
  489              d=putchar(' '); 
  490            

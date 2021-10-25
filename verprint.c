@@ -12,6 +12,7 @@ extern unsigned char  ValidaSensoresPaso(void);
 extern void clear_buffer();
 extern void Trama_print_cod_barras(unsigned char *msj,unsigned char vehiculo);
 extern void Cmd_LPR_Salida_print(unsigned char *msj,unsigned char vehiculo);
+extern void Block_read_Clock_Hex(unsigned char *datos_clock);
 
 
 /*variables externas*/
@@ -58,6 +59,9 @@ definiciones de la pantalla
 #define AUDIO_ENTER				      0XA1		// RELE 2
 #define GRACIAS									0XFF
 
+
+#define True										0x01
+#define False										0x00
 /*---------------------------------------------------------------------------------
 funcion que debuelve la posicion del inicio del primer caracter de numerico de 0 a 9
 -----------------------------------------------------------------------------------*/
@@ -85,7 +89,32 @@ unsigned char contador=0;
 		contador++;
 	}
 	return contador;
-}		
+}	
+unsigned char check_fechaOut_2(unsigned char *buffer)
+{
+	unsigned long int fecha_inicio,fecha_fin;
+	unsigned char datos_clk[6];
+	char temp;
+	
+	
+		Block_read_Clock_Hex(datos_clk);															/*leo el clock actual*/
+ 		fecha_inicio =	datos_clk[0] * 365 + datos_clk[1] * 30 + datos_clk[2] ;
+		fecha_fin = *(buffer ) * 365 + *(buffer + 1) * 30  + *(buffer + 2);
+		
+			
+		if (fecha_fin >= fecha_inicio	)						
+		{
+			temp = True;
+		}
+		else
+		{
+			temp = False;
+		}
+			
+
+	
+	return temp;
+}
 /*-------------------------------------------------------------------------------------------------------------------------
 procedimiento que lee el codigo de barra o el QR
 SEQ_INICIO=00 se detecta la presencia vehicular 
@@ -96,6 +125,7 @@ void Lee_ticket(void)
 {
 	static unsigned char paso_una_vez=0;
 	static unsigned char Ticket[10];
+	static unsigned char fecha[11];
 	unsigned char temp,temp2,vehiculo;
 	unsigned char *tipo_vehiculo;
 	switch (g_cEstadoImpresion)
@@ -246,8 +276,15 @@ lee el dato en el pto serial del codigo qr
 				Debug_txt_Tibbo(Ticket);																						/*imprimo el numero de ticket*/
 				Debug_txt_Tibbo((unsigned char *) "\r\n");													/*final de linea*/
 				
-				
-		
+				/*buscamos la fecha en el ticket*/
+					temp=num_char(rbuf+temp2,':');
+					temp2=num_char(rbuf+temp,'>');
+					strncpy(fecha,rbuf+temp+2,temp2);
+
+				Debug_txt_Tibbo((unsigned char *) "Fecha de salida: ");						/*msj tipo de vehiculo */
+				Debug_txt_Tibbo((unsigned char *)fecha);																					/*caracter del tipo de vehiculo*/
+				Debug_txt_Tibbo((unsigned char *) "\n");													/*final de linea*/					
+					
 				Trama_print_cod_barras(Ticket,vehiculo);														/*envio la trama al pto paralelo y es enviada al principal el cual comunica con acces*/
 				
 				

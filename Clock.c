@@ -357,26 +357,26 @@ void Block_read_clock_ascii(unsigned char *datos_clock)
 								
 }	
 
-//void Block_read_Clock_Hex(unsigned char *datos_clock)
-//{
+void Block_read_Clock_Hex(unsigned char *datos_clock)
+{
 	
 	/*año*/
-//	*datos_clock=bcd_hex(lee_clk(RANO));			
-//	 datos_clock++;
+	*datos_clock=bcd_hex(lee_clk(RANO));			
+	 datos_clock++;
 	/*mes*/
-//	*datos_clock=bcd_hex(lee_clk(RMES));			
-//	 datos_clock++;
+	*datos_clock=bcd_hex(lee_clk(RMES));			
+	 datos_clock++;
 	/*Dia*/
-//	*datos_clock=bcd_hex(lee_clk(RDIA));			
-//	 datos_clock++;
+	*datos_clock=bcd_hex(lee_clk(RDIA));			
+	 datos_clock++;
 	/*hora*/	
-//	*datos_clock=bcd_hex(lee_clk(RHORA));			
-//	 datos_clock++;
+	*datos_clock=bcd_hex(lee_clk(RHORA));			
+	 datos_clock++;
 	/*minutos*/	
-//	*datos_clock=bcd_hex(lee_clk(RMIN));			
-//	 datos_clock++;
+	*datos_clock=bcd_hex(lee_clk(RMIN));			
+	 datos_clock++;
 
-//}
+}
 /*
 void Block_read_Clock_Hex_bcd(unsigned char *datos_clock)
 {
