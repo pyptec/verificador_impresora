@@ -13,6 +13,9 @@ extern void clear_buffer();
 extern void Trama_print_cod_barras(unsigned char *msj,unsigned char vehiculo);
 extern void Cmd_LPR_Salida_print(unsigned char *msj,unsigned char vehiculo);
 extern void Block_read_Clock_Hex(unsigned char *datos_clock);
+extern unsigned char bcd_hex (unsigned char l_data);
+extern void PantallaLCD(unsigned char cod_msg);
+extern char lee_clk (unsigned char dir_clk);
 
 
 /*variables externas*/
@@ -25,6 +28,9 @@ extern	unsigned char g_cContByteRx;
 extern  unsigned char  USE_LPR;
 extern unsigned char Timer_wait;
 
+#define DIRIJASE_CAJA						90
+#define RHORA						0x85
+#define RMIN						0x83
 sbit lock = P1^7;						//Relevo 
 /*----------------------------------------------------------------------------
 tiempo de delay entre funciones
@@ -90,6 +96,9 @@ unsigned char contador=0;
 	}
 	return contador;
 }	
+/*------------------------------------------------------------------------------------
+Solo valida año, mes, y dia
+------------------------------------------------------------------------------------*/
 unsigned char check_fechaOut_2(unsigned char *buffer)
 {
 	unsigned long int fecha_inicio,fecha_fin;
@@ -115,6 +124,39 @@ unsigned char check_fechaOut_2(unsigned char *buffer)
 	
 	return temp;
 }
+unsigned Bloque_Horario(unsigned char  * buffer)
+{
+	unsigned char Estado_Horario;	
+	unsigned int HoraNow, Hora_Ticket;
+	
+	/*la hora del momento de entrada del vehiculo*/
+
+	Debug_txt_Tibbo((unsigned char *) "HORA AHORA: ");
+	Debug_chr_Tibbo(lee_clk(RHORA));
+	Debug_chr_Tibbo(lee_clk(RMIN));
+	Debug_txt_Tibbo((unsigned char *) "\r\n");
+	HoraNow = (lee_clk(RHORA) * 60) + (lee_clk(RMIN) );
+	
+	/* desde la hora en que puede ingresar vehiculo */
+	
+	
+	Debug_txt_Tibbo((unsigned char *) "HORA PROGRAMADA DESDE: ");
+	Hora_Ticket = *(buffer+3)* 60 + *(buffer+4);
+	if( HoraNow <= Hora_Ticket)
+		{
+			//send_portERR(PRMR_MENSUAL_FUERA_HORARIO);
+			Debug_txt_Tibbo((unsigned char *) "EN HORARIO PROGRAMADO\r\n");
+			Estado_Horario = True;
+		}
+		else
+		{
+			//send_portERR(PRMR_MENSUAL_FUERA_HORARIO);
+			//PantallaLCD(MENSUAL_FUERA_HORARIO);
+			Debug_txt_Tibbo((unsigned char *) "DESPUES DEL HORARIO PROGRAMADO\r\n");
+			Estado_Horario = False;
+		}
+		return Estado_Horario;
+}
 /*-------------------------------------------------------------------------------------------------------------------------
 procedimiento que lee el codigo de barra o el QR
 SEQ_INICIO=00 se detecta la presencia vehicular 
@@ -125,7 +167,8 @@ void Lee_ticket(void)
 {
 	static unsigned char paso_una_vez=0;
 	static unsigned char Ticket[10];
-	static unsigned char fecha[11];
+	unsigned char fecha[11];
+	static unsigned char fecha2[10];
 	unsigned char temp,temp2,vehiculo;
 	unsigned char *tipo_vehiculo;
 	switch (g_cEstadoImpresion)
@@ -275,16 +318,41 @@ lee el dato en el pto serial del codigo qr
 								
 				Debug_txt_Tibbo(Ticket);																						/*imprimo el numero de ticket*/
 				Debug_txt_Tibbo((unsigned char *) "\r\n");													/*final de linea*/
-				
-				/*buscamos la fecha en el ticket*/
-					temp=num_char(rbuf+temp2,':');
+				/*----------------------------------------------------*/
+				/*buscamos la fecha de salida  en el ticket*/
+					
+					temp=num_char(rbuf+temp,':')+temp;
+					Debug_chr_Tibbo(temp);	
 					temp2=num_char(rbuf+temp,'>');
+					Debug_chr_Tibbo(temp2);																							/*numero de caracteres del ticket*/
+					Debug_txt_Tibbo((unsigned char *) "\r\n");	
 					strncpy(fecha,rbuf+temp+2,temp2);
-
+					fecha[temp2-2]=0;
+					/*año*/
+					fecha2[0]=bcd_hex((fecha[2]-0x30)<<4 | fecha[3]-0x30);
+					/*mes*/
+					fecha2[1]=bcd_hex((fecha[5]-0x30)<<4 | fecha[6]-0x30);
+					/*dia*/
+					fecha2[2]=bcd_hex((fecha[8]-0x30)<<4 | fecha[9]-0x30);
+					/*horas*/
+					fecha2[3]=bcd_hex((fecha[0x0b]-0x30)<<4 | fecha[0xc]-0x30);
+					/*minutos*/
+					fecha2[4]=bcd_hex((fecha[0x0e]-0x30)<<4 | fecha[0xf]-0x30);
+					/*--------------------------------------------------*/
 				Debug_txt_Tibbo((unsigned char *) "Fecha de salida: ");						/*msj tipo de vehiculo */
 				Debug_txt_Tibbo((unsigned char *)fecha);																					/*caracter del tipo de vehiculo*/
 				Debug_txt_Tibbo((unsigned char *) "\n");													/*final de linea*/					
 					
+				if (check_fechaOut_2(fecha2)!= True)
+				{
+					/*dirijase a caja*/
+					PantallaLCD(DIRIJASE_CAJA);
+				}
+				if(Bloque_Horario(fecha2) != True)
+				{
+					/*dirijase a caja*/
+					PantallaLCD(DIRIJASE_CAJA);
+				}
 				Trama_print_cod_barras(Ticket,vehiculo);														/*envio la trama al pto paralelo y es enviada al principal el cual comunica con acces*/
 				
 				
@@ -309,8 +377,10 @@ lee el dato en el pto serial del codigo qr
 			}
 					break;
 		case SEQ_CMNCCN_PTO:
+			lock=1;
 			if (ValTimeOutCom==1)
 			{
+				lock=0;
 				ES = 1;																																							/*habilito pto*/
 				Debug_txt_Tibbo((unsigned char *) "fin de lectura de trama\r\n");										/*la respuesta es desconocida*/
 				//PantallaLCD(GRACIAS);

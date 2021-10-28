@@ -30,6 +30,7 @@ extern void Delay_20us(unsigned int cnt);
 #define LECTURA_WIEGAND					0xB0
 #define LECTURA_DE_TARJETAS			0xb0
 #define NO_PAGO									0XE7
+#define DIRIJASE_CAJA						90
 
 #define INGRESO									0xFA
 #define BIENVENIDO							0XFE
@@ -314,6 +315,11 @@ unsigned char datos[40];
 						strcpy(datos,"a;90;NO REGISTRA PAGO.... \n\0");
 						Raspberry_data (datos);
 						break;
+						case DIRIJASE_CAJA:
+						strcpy(datos,"a;90;DIRIJASE A CAJA\n\0");
+						Raspberry_data (datos);
+								
+            break;
 						default:
 						break;
 						
