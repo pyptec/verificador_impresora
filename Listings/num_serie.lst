@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/28/2021 15:39:21 PAGE 1   
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/29/2021 14:58:46 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE NUM_SERIE
@@ -62,7 +62,7 @@ line level    source
   46            
   47            LeerMemoria(EE_CONSECUTIVO3,cod_serie);
   48            return numero= atol(cod_serie);
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/28/2021 15:39:21 PAGE 2   
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/29/2021 14:58:46 PAGE 2   
 
   49            
   50          } */
@@ -126,7 +126,7 @@ line level    source
  102            ceros_izq(serie);
  103          
  104          }*/
-C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/28/2021 15:39:21 PAGE 3   
+C51 COMPILER V9.59.0.0   NUM_SERIE                                                         10/29/2021 14:58:46 PAGE 3   
 
 
 

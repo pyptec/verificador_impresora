@@ -172,8 +172,8 @@ unsigned char bcd_hex (unsigned char l_data)
  /*------------------------------------------------------------------------------
  Rutina que convierte de Hex a bcd 
 ------------------------------------------------------------------------------*/
-/*TEMPORALMENTE FUERA DE SERVICIO
- unsigned char hex_bcd (unsigned char byte)
+unsigned char hex_bcd (unsigned char byte)
+ 
 {
   unsigned char nibble_h; 
 	unsigned char nibble_l;
@@ -198,7 +198,7 @@ unsigned char bcd_hex (unsigned char l_data)
  	 return byte_out;
 	
 }
-*/
+
 /*------------------------------------------------------------------------------
 	CONVIERTE DE 1BYTE HEXADECIMAL A DECIMAL 											
 valorhex= pasa el byte en Hex y lo convierte en decimal

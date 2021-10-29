@@ -151,6 +151,23 @@ void Debug_chr_Tibbo(unsigned char Dat)
 	
 	}
 }
+/*------------------------------------------------------------------------------
+Transmito un caracter pasandolo a ascii 
+------------------------------------------------------------------------------*/
+void Debug_chr_Tibbo32(unsigned long int dato)
+{
+	unsigned char temp3,temp2,temp1,temp0;
+	
+	temp3=(dato>>24);
+	temp2=(dato>>16);
+	temp1=(dato>>8);
+	temp0=dato;
+	Debug_chr_Tibbo(temp3);
+	Debug_chr_Tibbo(temp2);
+	Debug_chr_Tibbo(temp1);
+	Debug_chr_Tibbo(temp0);
+	
+}
 
 /*------------------------------------------------------------------------------
 Transmito un Buffer x y lo pasa a ascii 

@@ -185,7 +185,7 @@ void Valida_Trama_Pto(unsigned char *buffer, unsigned char length_trama)
 		
 		
 			length_trama=0;
-			lock=1;		
+			//lock=1;		
 			Timer_wait=10;	
 			send_portERR(AUDIO_ENTER);
 			ValTimeOutCom=TIME_PLACA;
