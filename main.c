@@ -157,6 +157,7 @@ sel_Funcion();																														/*el pulsador funcion es precionadoa
 	menu();
 	}
 	variable_inicio();
+	Limpiar_memoria_ticket();
 
 	ValTimeOutCom=3;																												/*tiempo inicial para ver los sensores*/
 	

@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   IO_SENSORES                                                       10/29/2021 14:58:46 PAGE 1   
+C51 COMPILER V9.59.0.0   IO_SENSORES                                                       11/12/2021 16:30:59 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE IO_SENSORES
@@ -62,7 +62,7 @@ line level    source
   52   1        sel_B=0;
   53   1        sel_C=1;
   54   1      }
-C51 COMPILER V9.59.0.0   IO_SENSORES                                                       10/29/2021 14:58:46 PAGE 2   
+C51 COMPILER V9.59.0.0   IO_SENSORES                                                       11/12/2021 16:30:59 PAGE 2   
 
   55          //***************************************************************************************************
   56          void sel_Sensor1(void)
@@ -126,7 +126,7 @@ line level    source
  114          
  115          unsigned char  ValidaSensoresPaso(void)
  116          {
-C51 COMPILER V9.59.0.0   IO_SENSORES                                                       10/29/2021 14:58:46 PAGE 3   
+C51 COMPILER V9.59.0.0   IO_SENSORES                                                       11/12/2021 16:30:59 PAGE 3   
 
  117   1       
  118   1          sel_Sensor2();                                //garantiso q la barrera se encuentre en posicion baja  
@@ -190,7 +190,7 @@ line level    source
  175          funcion de msj en lcd de informacion
  176          toggle=0    envia por el pto paralelo STX, cmd (i), año, mes, dia, hora, minutos, seg, dia de la semana, ETX
  177          toggle=1    
-C51 COMPILER V9.59.0.0   IO_SENSORES                                                       10/29/2021 14:58:46 PAGE 4   
+C51 COMPILER V9.59.0.0   IO_SENSORES                                                       11/12/2021 16:30:59 PAGE 4   
 
  178          toggle=2    envia ID y COD_PARK   por el pto paralelo STX, cmd (D), ID_CLIENTE, COD_CLIENTE, ETX  
  179          ------------------------------------------------------------------------------*/
@@ -254,7 +254,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.59.0.0   IO_SENSORES                                                       10/29/2021 14:58:46 PAGE 5   
+C51 COMPILER V9.59.0.0   IO_SENSORES                                                       11/12/2021 16:30:59 PAGE 5   
 
 END OF MODULE INFORMATION.
 

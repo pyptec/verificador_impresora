@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   MONITOR                                                           10/29/2021 14:58:46 PAGE 1   
+C51 COMPILER V9.59.0.0   MONITOR                                                           11/12/2021 16:30:59 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MONITOR
@@ -62,7 +62,7 @@ line level    source
   52   3              contador=0;
   53   3              time_out=0;
   54   3              while ((rx_ip==1)&&(time_out==0))
-C51 COMPILER V9.59.0.0   MONITOR                                                           10/29/2021 14:58:46 PAGE 2   
+C51 COMPILER V9.59.0.0   MONITOR                                                           11/12/2021 16:30:59 PAGE 2   
 
   55   3              {
   56   4                contador++;
@@ -126,7 +126,7 @@ line level    source
  113          (E) cmd que indica salida
  114          ------------------------------------------------------------------------------*/
  115          /*no usado para esta aplicacion*/
-C51 COMPILER V9.59.0.0   MONITOR                                                           10/29/2021 14:58:46 PAGE 3   
+C51 COMPILER V9.59.0.0   MONITOR                                                           11/12/2021 16:30:59 PAGE 3   
 
  116          //void Cmd_Monitor(unsigned char cmd)
  117          //{
@@ -190,7 +190,7 @@ line level    source
  175   1        Buffer_Lpr[2]='S';                                      /*cmd S que salida wiegand*/
  176   1        if(Tipo_Vehiculo!=0)                                    /*Tipo de vehiculo*/
  177   1          {
-C51 COMPILER V9.59.0.0   MONITOR                                                           10/29/2021 14:58:46 PAGE 4   
+C51 COMPILER V9.59.0.0   MONITOR                                                           11/12/2021 16:30:59 PAGE 4   
 
  178   2            Buffer_Lpr[j++]='M';                                /*moto*/
  179   2          }
@@ -254,7 +254,7 @@ line level    source
  236            
  237            
  238            
-C51 COMPILER V9.59.0.0   MONITOR                                                           10/29/2021 14:58:46 PAGE 5   
+C51 COMPILER V9.59.0.0   MONITOR                                                           11/12/2021 16:30:59 PAGE 5   
 
  239          //    Buffer_Lpr[j++]=':';                            /*separador de la fecha de entrada*/
  240          
@@ -318,7 +318,7 @@ line level    source
  298   1        //Buffer_Lpr[j]=ETX;                               /*le sumo el fin de la trama*/ 
  299   1        Monitor_chr(Buffer_Lpr,j);                        /*rutina de envio de la trama a monitor*/
  300   1      
-C51 COMPILER V9.59.0.0   MONITOR                                                           10/29/2021 14:58:46 PAGE 6   
+C51 COMPILER V9.59.0.0   MONITOR                                                           11/12/2021 16:30:59 PAGE 6   
 
  301   1      }
  302          /*

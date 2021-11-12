@@ -18,6 +18,11 @@ extern void PantallaLCD(unsigned char cod_msg);
 extern char lee_clk (unsigned char dir_clk);
 extern void Debug_chr_Tibbo32(unsigned long int dato);
 extern unsigned char hex_bcd (unsigned char byte);
+extern unsigned char rd_eeprom (unsigned char control,unsigned int Dir); 
+extern void wr_eeprom (unsigned char control,unsigned int Dir, unsigned char data_eeprom);
+extern void EscribirMemoria(unsigned char control,unsigned int  addres,unsigned char  *res);
+extern void LeerMemoria(unsigned int addres,unsigned char *res);
+extern void Leer_Memoria_banco(unsigned int addres,unsigned char *res,unsigned char lent);
 
 /*variables externas*/
 extern unsigned char g_cEstadoComSoft;
@@ -30,6 +35,7 @@ extern  unsigned char  USE_LPR;
 extern unsigned char Timer_wait;
 
 #define DIRIJASE_CAJA						90
+#define NO_REGISTRA							0x04
 #define RHORA						0x85
 #define RMIN						0x83
 sbit lock = P1^7;						//Relevo 
@@ -69,6 +75,11 @@ definiciones de la pantalla
 
 #define True										0x01
 #define False										0x00
+
+#define EE_NOSAVETICKET					0X299
+#define EE_DATA_TICKET1					0X400
+
+
 /*---------------------------------------------------------------------------------
 funcion que debuelve la posicion del inicio del primer caracter de numerico de 0 a 9
 -----------------------------------------------------------------------------------*/
@@ -132,7 +143,7 @@ unsigned char check_fechaOut_2(unsigned char *buffer)
 	
 	return temp;
 }
-unsigned Bloque_Horario(unsigned char  * buffer)
+unsigned char Bloque_Horario(unsigned char  * buffer)
 {
 	unsigned char Estado_Horario;	
 	unsigned int HoraNow, Hora_Ticket;
@@ -171,6 +182,89 @@ unsigned Bloque_Horario(unsigned char  * buffer)
 		}
 		return Estado_Horario;
 }
+void set_Almacena_ticket_eeprom(unsigned char * ticket)
+{
+	unsigned char dataee;
+	dataee=rd_eeprom(0xa8,EE_NOSAVETICKET);
+	if ((dataee<=25) )
+	{
+		/*primer dato de almacenamiento*/
+		
+		strcat(ticket,'\r');
+		
+		
+			
+			EscribirMemoria(0xa8,(unsigned int)(EE_DATA_TICKET1+(dataee*0x0f)),ticket);
+			Debug_txt_Tibbo((unsigned char *) "SET ticket_memoria grabado: ");		
+			Debug_txt_Tibbo((unsigned char *) ticket);	
+			Debug_txt_Tibbo((unsigned char *) "\n");	
+		/*graba el numero de datos*/
+		  dataee++;
+			wr_eeprom(0xa8,EE_NOSAVETICKET,dataee);
+		  
+			Debug_txt_Tibbo((unsigned char *) "Set Numero de ticket grabados: ");		
+			Debug_chr_Tibbo(dataee);	
+			Debug_txt_Tibbo((unsigned char *) "\n");
+		
+	}	
+	else
+	{
+		dataee=0;
+		EscribirMemoria(0xa8,EE_DATA_TICKET1+(unsigned int)(dataee*0x0f),ticket);
+		dataee++;
+		wr_eeprom(0xa8,EE_NOSAVETICKET,dataee);
+		
+	}
+	
+	
+}
+
+unsigned char Get_Almacena_ticket_eeprom(unsigned char * ticket)
+{
+unsigned char Ticket_eeprom[10];
+unsigned char dataee;
+unsigned int i;
+static unsigned char dbee;	
+	dataee=rd_eeprom(0xa8,EE_NOSAVETICKET);
+	
+		if (dataee <= 25) 
+		{
+		
+		//Debug_txt_Tibbo((unsigned char *) "numero de ticket grabados: ");						/*msj tipo de vehiculo */
+		//Debug_chr_Tibbo(dataee);																										/*caracter del tipo de vehiculo*/
+		//Debug_txt_Tibbo((unsigned char *) "\n");	
+
+			for (dbee=0; dbee<dataee; dbee++)
+			{
+				i=(unsigned int) (dbee * 0x0f);
+				//Debug_txt_Tibbo((unsigned char *) "numero de posicion memoria: ");						/*msj tipo de vehiculo */
+				//Debug_chr_Tibbo(dbee);																										/*caracter del tipo de vehiculo*/
+				//Debug_txt_Tibbo((unsigned char *) "\n");	
+				
+				 LeerMemoria((EE_DATA_TICKET1 + i),Ticket_eeprom);
+			
+				
+				Debug_txt_Tibbo((unsigned char *) "addres ticket eeprom: ");						/*msj tipo de vehiculo */
+				Debug_chr_Tibbo32(EE_DATA_TICKET1 + i);																					/*caracter del tipo de vehiculo*/
+				Debug_txt_Tibbo((unsigned char *) "\n");	
+				
+				Debug_txt_Tibbo((unsigned char *) "ticket_memoria: ");		
+				Debug_txt_Tibbo((unsigned char *) Ticket_eeprom);	
+				Debug_txt_Tibbo((unsigned char *) "\n");	
+		
+				if ((strcmp(Ticket_eeprom,ticket)) == 0)	
+					{
+						Debug_txt_Tibbo((unsigned char *) "ok esta en memoria  ");	
+						return 0;
+						break;
+					}
+				}
+		
+	
+	
+	 }
+	return(0xFF);
+}
 /*-------------------------------------------------------------------------------------------------------------------------
 procedimiento que lee el codigo de barra o el QR
 SEQ_INICIO=00 se detecta la presencia vehicular 
@@ -181,7 +275,7 @@ void Lee_ticket(void)
 {
 	static unsigned char paso_una_vez=0;
 	static unsigned char Ticket[10];
-	static unsigned char Ticket_copia[10];
+//	static unsigned char Ticket_copia[10];
 	unsigned char fecha[11];
 	static unsigned char fecha2[10];
 	unsigned char temp,temp2,vehiculo;
@@ -244,6 +338,7 @@ lee el dato en el pto serial del codigo qr
 					strcpy(Ticket,rbuf);																																/*salvo el buffer*/
 					temp=strlen(rbuf);																																	/*longitud del buffer*/
 					Ticket[temp-1]=0;
+					Ticket[temp]=0;
 					if (temp>10)
 					{
 					clear_buffer();
@@ -399,14 +494,32 @@ lee el dato en el pto serial del codigo qr
 		}
 		break;
 		case SEQ_CMNCCN_PTO:
+			
+			/*pregunta si ya esta grabado*/
+			if(Get_Almacena_ticket_eeprom(Ticket)== 0xff)
+			{
+			/*no esta grabado procedemos a grabar el ticket*/
+				set_Almacena_ticket_eeprom(Ticket);
+				ValTimeOutCom=TIME_CARD;
+				clear_buffer();
+				paso_una_vez=0;			 
+				g_cEstadoImpresion=SEQ_INICIO;
+				lock=1;
+				break;
+			}
+			else
+			{
+			/*ya salio el ticket*/
+				Debug_txt_Tibbo((unsigned char *) "ya salio el ticket  ");	
+				PantallaLCD(NO_REGISTRA);
+				lock=0;
+				ES = 1;																																							/*habilito pto*/
+				ValTimeOutCom=TIME_CARD;
+				clear_buffer();
+				paso_una_vez=0;			 
+				g_cEstadoImpresion=SEQ_INICIO;
+			}
 				
-			
-		if ((tipo_vehiculo=strstr(Ticket_copia,Ticket))== 0)	
-		{
-			lock=1;
-			strcpy(Ticket_copia,Ticket);
-		}
-			
 			if (ValTimeOutCom==1)
 			{
 				lock=0;

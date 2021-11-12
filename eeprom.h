@@ -26,5 +26,6 @@ void wr_eeprom (unsigned char control,unsigned int Dir, unsigned char data_eepro
 unsigned char rd_eeprom (unsigned char control,unsigned int Dir); 
 void LeerMemoria(unsigned int addres,unsigned char *res);
 void EscribirMemoria(unsigned char control,unsigned int  addres,unsigned char  *res);
+void Limpiar_memoria_ticket();
 
 #endif	/* _EEPROM_H_ */

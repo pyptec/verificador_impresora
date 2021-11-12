@@ -34,8 +34,8 @@ unsigned char l_chr;
 #define EE_ID_CLIENTE		0x0000
 #define EE_FECHA_VENCIMIENTO		0X0350
 #define EE_BAUDIO								0X0800
-
-
+#define EE_NOSAVETICKET					0X299
+#define EE_DATA_TICKET1					0X400
 //*******************************************************************************************
 void ackd(void)
 {
@@ -280,6 +280,8 @@ do
 	while(i !='\0');
  	
 }
+
+
 /*---------------------------------------------------------------------------------------------------------------------------------------
 escribe un bloque de datos en la eeprom
 	Escribe hasta encontrar el CR y lo cambia por (0) que es el fin de la cadena
@@ -339,12 +341,25 @@ void Formato_eeprom()
 {
 unsigned char dato=0xff;
 unsigned int i;
-//unsigned char password[7]	;
+
 	for(i=0; i< EE_FECHA_VENCIMIENTO; i++)
 	{
 			wr_eeprom(0xa8,i,dato);
 	}
 			wr_eeprom(0xa8 ,EE_BAUDIO,00);	
-		//strcpy(password, "nataly");
-	//	Dwload_EEprom_prog(password);	
+	
+}
+void Limpiar_memoria_ticket()
+{
+	unsigned int i;
+	/*limpio concecutivo*/
+
+	wr_eeprom(0xa8,EE_NOSAVETICKET,0x00);
+	
+	for(i=EE_DATA_TICKET1; i< 0x5ff; i++)
+	{
+			wr_eeprom(0xa8,i,00);
+	}
+
+	
 }
