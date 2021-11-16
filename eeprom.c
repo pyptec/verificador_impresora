@@ -17,6 +17,7 @@ void Formato_eeprom();
 void confirmacion();
 extern void Dwload_EEprom_prog(unsigned char *password);
 extern void Block_read_clock_ascii(unsigned char *datos_clock);
+extern void Limpiar_memoria_ticket();
 
 //******************************************************************************************
 // 		RUTINAS DE EEPROM 24FC1025

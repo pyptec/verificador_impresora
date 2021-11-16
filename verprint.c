@@ -23,6 +23,7 @@ extern void wr_eeprom (unsigned char control,unsigned int Dir, unsigned char dat
 extern void EscribirMemoria(unsigned char control,unsigned int  addres,unsigned char  *res);
 extern void LeerMemoria(unsigned int addres,unsigned char *res);
 extern void Leer_Memoria_banco(unsigned int addres,unsigned char *res,unsigned char lent);
+extern void Limpiar_memoria_ticket();
 
 /*variables externas*/
 extern unsigned char g_cEstadoComSoft;
@@ -83,6 +84,7 @@ definiciones de la pantalla
 /*---------------------------------------------------------------------------------
 funcion que debuelve la posicion del inicio del primer caracter de numerico de 0 a 9
 -----------------------------------------------------------------------------------*/
+/*
 unsigned char num_num(unsigned char * p)	
 {
 unsigned char contador=0;
@@ -93,7 +95,8 @@ unsigned char contador=0;
 		contador++;
 	}
 	return contador;
-}		
+}
+*/
 /*---------------------------------------------------------------------------------
 definiciones de la pantalla
 -----------------------------------------------------------------------------------*/
@@ -263,6 +266,11 @@ static unsigned char dbee;
 	
 	
 	 }
+		else
+		{
+			Limpiar_memoria_ticket();
+		}
+		
 	return(0xFF);
 }
 /*-------------------------------------------------------------------------------------------------------------------------
@@ -402,7 +410,7 @@ lee el dato en el pto serial del codigo qr
 				/*codigo qr*/
 				buffer_ready=0;																											/*limpio el testigo de recepcion de datos serie*/
 				
-				temp=num_num(rbuf);																									/*funcion que pregunta donde empieza el primer numero del ticket*/
+				temp=num_char(rbuf,':')+2;																									/*funcion que pregunta donde empieza el primer numero del ticket*/
 			  temp2=num_char(rbuf+temp,'>');																			/*busca un caracter en la trama*/
 				if ((tipo_vehiculo=strstr(rbuf,"Carro"))!= 0)												/*pregunto el tipo de vehiculo grabado en el codigo QR*/
 					{
@@ -423,7 +431,7 @@ lee el dato en el pto serial del codigo qr
 				Debug_txt_Tibbo((unsigned char *) "\n");														/*final de linea*/
 		   
 				Ticket[0]=0;
-				if(temp== 0x0c)																											/*la trama debe iniciar en 0x0c*/
+				if((temp<= 0x0f ) || (temp>= 0x0c ))																											/*la trama debe iniciar en 0x0c*/
 				{	
 					strncpy(Ticket,rbuf+temp,temp2);																		/*copio el numero de ticket*/
 					Ticket[temp2]=0;																										/*finalizo la trama con (0)*/
